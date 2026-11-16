@@ -96,7 +96,17 @@ def test_dry_run_never_checks_because_nothing_is_sent():
     assert adapter.log == ["press space"]
 
 
-def test_the_guard_can_be_switched_off_deliberately():
+@pytest.fixture
+def no_pyautogui(monkeypatch):
+    """Simulate the optional SDK being absent, whether or not it is installed.
+
+    Without this, a machine that has pyautogui gets past the guard and really
+    presses the key.
+    """
+    monkeypatch.setitem(sys.modules, "pyautogui", None)   # `import pyautogui` -> ImportError
+
+
+def test_the_guard_can_be_switched_off_deliberately(no_pyautogui):
     adapter = driver(unsupported(), enforce_focus=False)
     adapter.log.append("sentinel")
     # No exception from the guard; the only failure left is the missing SDK.
@@ -120,6 +130,6 @@ def test_note_still_works_when_the_game_is_not_focused():
     assert driver(elsewhere()).apply(ActionCall("note", {"text": "hold"})).ok
 
 
-def test_the_focused_case_passes_the_guard_and_reaches_the_input_layer():
+def test_the_focused_case_passes_the_guard_and_reaches_the_input_layer(no_pyautogui):
     with pytest.raises(RuntimeError, match="pip install"):
         driver(focused()).press("space")

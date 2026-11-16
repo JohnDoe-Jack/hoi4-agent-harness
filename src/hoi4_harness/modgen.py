@@ -145,8 +145,10 @@ def _effects(tags: tuple[str, ...]) -> str:
             f"llm_bridge_select_{tag} = {{",
             "\tllm_bridge_clear_target = yes",
             f"\tset_country_flag = llmb_target_{tag}",
-            f"\tset_variable = {{ llmb_event_kind = {EVENT_TARGET_SELECTED} }}",
-            "\tllm_bridge_emit_event = yes",
+            # A literal log line, like the raise effects below: llmb_event_detail
+            # is never set here, so llm_bridge_emit_event printed detail=0.
+            f'\tlog = "LLMB|v{SCHEMA_VERSION}|evt|tag=[ROOT.GetTag]|kind={EVENT_TARGET_SELECTED}'
+            f'|detail={tag}"',
             "}",
             "",
         ]

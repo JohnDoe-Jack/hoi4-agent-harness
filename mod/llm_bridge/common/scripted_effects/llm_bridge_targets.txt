@@ -56,344 +56,295 @@ llm_bridge_clear_target = {
 llm_bridge_select_GER = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_GER
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=GER"
 }
 
 llm_bridge_select_ENG = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_ENG
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=ENG"
 }
 
 llm_bridge_select_FRA = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_FRA
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=FRA"
 }
 
 llm_bridge_select_ITA = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_ITA
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=ITA"
 }
 
 llm_bridge_select_SOV = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_SOV
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=SOV"
 }
 
 llm_bridge_select_USA = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_USA
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=USA"
 }
 
 llm_bridge_select_JAP = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_JAP
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=JAP"
 }
 
 llm_bridge_select_CHI = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_CHI
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=CHI"
 }
 
 llm_bridge_select_PRC = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_PRC
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=PRC"
 }
 
 llm_bridge_select_MAN = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_MAN
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=MAN"
 }
 
 llm_bridge_select_POL = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_POL
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=POL"
 }
 
 llm_bridge_select_CZE = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_CZE
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=CZE"
 }
 
 llm_bridge_select_AUS = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_AUS
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=AUS"
 }
 
 llm_bridge_select_HUN = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_HUN
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=HUN"
 }
 
 llm_bridge_select_ROM = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_ROM
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=ROM"
 }
 
 llm_bridge_select_YUG = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_YUG
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=YUG"
 }
 
 llm_bridge_select_GRE = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_GRE
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=GRE"
 }
 
 llm_bridge_select_BUL = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_BUL
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=BUL"
 }
 
 llm_bridge_select_ALB = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_ALB
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=ALB"
 }
 
 llm_bridge_select_TUR = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_TUR
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=TUR"
 }
 
 llm_bridge_select_SPR = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_SPR
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=SPR"
 }
 
 llm_bridge_select_POR = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_POR
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=POR"
 }
 
 llm_bridge_select_BEL = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_BEL
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=BEL"
 }
 
 llm_bridge_select_HOL = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_HOL
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=HOL"
 }
 
 llm_bridge_select_LUX = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_LUX
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=LUX"
 }
 
 llm_bridge_select_DEN = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_DEN
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=DEN"
 }
 
 llm_bridge_select_NOR = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_NOR
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=NOR"
 }
 
 llm_bridge_select_SWE = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_SWE
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=SWE"
 }
 
 llm_bridge_select_FIN = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_FIN
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=FIN"
 }
 
 llm_bridge_select_EST = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_EST
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=EST"
 }
 
 llm_bridge_select_LAT = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_LAT
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=LAT"
 }
 
 llm_bridge_select_LIT = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_LIT
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=LIT"
 }
 
 llm_bridge_select_SWI = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_SWI
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=SWI"
 }
 
 llm_bridge_select_IRE = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_IRE
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=IRE"
 }
 
 llm_bridge_select_CAN = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_CAN
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=CAN"
 }
 
 llm_bridge_select_AST = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_AST
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=AST"
 }
 
 llm_bridge_select_NZL = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_NZL
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=NZL"
 }
 
 llm_bridge_select_SAF = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_SAF
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=SAF"
 }
 
 llm_bridge_select_RAJ = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_RAJ
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=RAJ"
 }
 
 llm_bridge_select_SIA = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_SIA
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=SIA"
 }
 
 llm_bridge_select_PHI = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_PHI
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=PHI"
 }
 
 llm_bridge_select_MEX = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_MEX
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=MEX"
 }
 
 llm_bridge_select_BRA = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_BRA
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=BRA"
 }
 
 llm_bridge_select_ARG = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_ARG
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=ARG"
 }
 
 llm_bridge_select_PER = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_PER
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=PER"
 }
 
 llm_bridge_select_IRQ = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_IRQ
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=IRQ"
 }
 
 llm_bridge_select_SAU = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_SAU
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=SAU"
 }
 
 llm_bridge_select_EGY = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_EGY
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=EGY"
 }
 
 llm_bridge_select_ETH = {
 	llm_bridge_clear_target = yes
 	set_country_flag = llmb_target_ETH
-	set_variable = { llmb_event_kind = 13 }
-	llm_bridge_emit_event = yes
+	log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=13|detail=ETH"
 }
 
 llm_bridge_raise_invade = {

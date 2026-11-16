@@ -115,7 +115,7 @@ def test_acknowledging_one_of_two_identical_events_keeps_the_other(tmp_path):
     write_log(tmp_path, raised)
     assert len(adapter.read_state().events) == 2
     adapter.acknowledge_events(seen)
-    assert [e.text for e in adapter.read_state().events] == ["protect FIN"]
+    assert [e.text for e in adapter.read_state().events] == ["directive raised: protect FIN"]
 
 
 def test_the_clock_wait_does_not_swallow_the_war_that_ends_it(tmp_path):
@@ -207,3 +207,29 @@ def test_the_engine_date_wins_over_a_mod_field(tmp_path):
         encoding="utf-8",
     )
     assert LogTailAdapter(path).read_state().date == "1937-03-09"
+
+
+def test_the_date_text_the_game_really_prints_parses():
+    # Verified on 1.19.5.0: hour prefix, commas and a leading space.
+    assert parse_date(" 12:00, 1 January, 1936") == "1936-01-01"
+    assert parse_date(" 21:00, 2 January, 1936") == "1936-01-02"
+
+
+def test_the_engine_prefix_still_wins_over_the_mod_date(tmp_path):
+    line = ("[10:52:52][1936.03.05.12]: LLMB|v1|state|date= 12:00, 1 January, 1936|tag=SWE|pp=1.9\n")
+    assert LogTailAdapter(write_log(tmp_path, line)).read_state().date == "1936-03-05"
+
+
+def test_a_target_selection_reads_as_a_target_not_a_bare_zero(tmp_path):
+    selected = "[10:52:52][1936.01.01.12]: LLMB|v1|evt|tag=SWE|kind=13|detail=POL\n"
+    unset = "[10:52:52][1936.01.01.12]: LLMB|v1|evt|tag=SWE|kind=13|detail=0\n"
+    state = LogTailAdapter(write_log(tmp_path, STATE, selected, unset)).read_state()
+    texts = [e.text for e in state.events]
+    assert texts == ["target selected: POL", "directive target selected"]
+    assert "0" not in texts
+
+
+def test_a_raised_directive_reads_with_its_target(tmp_path):
+    raised = "[10:52:52][1936.01.01.12]: LLMB|v1|evt|tag=SWE|kind=14|detail=protect POL\n"
+    state = LogTailAdapter(write_log(tmp_path, STATE, raised)).read_state()
+    assert state.events[0].text == "directive raised: protect POL"

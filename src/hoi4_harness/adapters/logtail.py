@@ -93,7 +93,8 @@ def parse_date(raw: str) -> str | None:
         return date(year, month, day).isoformat()
     if re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw):
         return raw
-    match = re.fullmatch(r"(\d{1,2})\s+(\w+)\s+(\d{4})", raw)
+    # The game's date text: "12:00, 1 January, 1936" (hour prefix, commas).
+    match = re.fullmatch(r"(?:\d{1,2}:\d{2},?\s*)?(\d{1,2})\s+(\w+),?\s+(\d{4})", raw)
     if match:
         months = ["january", "february", "march", "april", "may", "june", "july",
                   "august", "september", "october", "november", "december"]
@@ -101,6 +102,24 @@ def parse_date(raw: str) -> str | None:
         if name in months:
             return date(int(match.group(3)), months.index(name) + 1, int(match.group(1))).isoformat()
     return None
+
+
+def _event_text(event_kind: str, detail: str) -> str:
+    """What the brief says for an event.
+
+    ``detail`` is free text only where the mod fills it in (a target, a raised
+    directive). Elsewhere it is the unset variable's ``0``, which must never
+    reach the brief as a bare ``-  0``.
+    """
+    detail = detail.strip()
+    label = event_kind.replace("_", " ")
+    if detail in ("", "0"):
+        return label
+    if event_kind == "directive_target_selected":
+        return f"target selected: {detail}"
+    if event_kind == "directive_raised":
+        return f"directive raised: {detail}"
+    return detail
 
 
 def engine_date(line: str) -> str | None:
@@ -286,7 +305,7 @@ class LogTailAdapter(GameAdapter):
             self._pending.append(
                 GameEvent(
                     kind=event_kind,
-                    text=fields.get("detail") or event_kind.replace("_", " "),
+                    text=_event_text(event_kind, fields.get("detail", "")),
                     severity=severity,
                     date=state.date,
                 )
