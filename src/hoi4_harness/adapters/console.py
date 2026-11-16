@@ -60,11 +60,14 @@ CONSOLE_ACTIONS = frozenset({
     "queue_construction", "set_production", "hire_advisor",
     "set_ai_directive", "set_ai_posture", "clear_ai_directives",
 })
+#: Everything on the UI path until the open questions in docs/adapters.md
+#: (where `run` reads, whether `eval_effect` takes an inline effect, -debug)
+#: are settled in a live game. Opt in per action with ``action_channels``.
 DEFAULT_CHANNELS: dict[str, str] = {
     "set_national_focus": "ui",
     "start_research": "ui",
     "delegate_army_to_ai": "ui",
-    **{name: "console" for name in sorted(CONSOLE_ACTIONS)},
+    **{name: "ui" for name in sorted(CONSOLE_ACTIONS)},
 }
 CHANNELS = ("ui", "console")
 

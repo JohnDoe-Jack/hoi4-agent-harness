@@ -1,8 +1,9 @@
 """Pick the channel per action: the console (console.py) or the UI (input_driver.py).
 
 The router is the writer a composite wraps. Which channel an action takes is
-configuration (``DEFAULT_CHANNELS``: console for the actions the game has a
-faithful effect for, UI for the rest), and every result says which one ran, in
+configuration (``DEFAULT_CHANNELS``: the UI for everything until the console is
+verified in a live game; the console is opt-in, and only for the actions the
+game has a faithful effect for), and every result says which one ran, in
 ``changed["channel"]``, so a transcript shows it. A console action whose
 preconditions fail is refused; it does not fall back to the UI, because that
 would be a different channel than the one asked for.

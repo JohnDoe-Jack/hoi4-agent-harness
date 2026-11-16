@@ -390,12 +390,14 @@ def test_a_missing_reader_sends_nothing(tmp_path, index):
 # --- the channel per action -----------------------------------------------------------
 
 
-def test_the_defaults_are_console_for_the_effects_the_game_has_and_ui_for_the_rest():
+def test_everything_is_on_the_ui_until_the_console_is_verified_live():
     channels = resolve_channels(None)
-    assert {n for n, c in channels.items() if c == "console"} == CONSOLE_ACTIONS == {
+    assert set(channels.values()) == {"ui"}
+    assert CONSOLE_ACTIONS == {
         "queue_construction", "set_production", "hire_advisor",
         "set_ai_directive", "set_ai_posture", "clear_ai_directives"}
-    assert channels["set_national_focus"] == "ui" and channels["start_research"] == "ui"
+    opted_in = resolve_channels({name: "console" for name in CONSOLE_ACTIONS})
+    assert {n for n, c in opted_in.items() if c == "console"} == CONSOLE_ACTIONS
     assert DEFAULT_CHANNELS["delegate_army_to_ai"] == "ui"
 
 
@@ -407,7 +409,10 @@ def test_a_channel_can_be_moved_but_not_to_one_that_does_not_exist_or_cheats():
         resolve_channels({"set_national_focus": "console"})
 
 
-def make_router(tmp_path, index, channels=None, game=None):
+ALL_CONSOLE = {name: "console" for name in CONSOLE_ACTIONS}
+
+
+def make_router(tmp_path, index, channels=ALL_CONSOLE, game=None):
     game, keys, driver, channel = rig(tmp_path, index, game=game)
     return game, keys, ChannelRouter(driver, channel, channels)
 
@@ -457,7 +462,8 @@ def test_build_adapter_wraps_the_input_driver_and_reads_the_console_settings(tmp
     log.write_text("", encoding="utf-8")
     adapter = build_adapter(HarnessConfig(
         adapter="logtail+input", run_dir=tmp_path, log_path=log,
-        console_dir=tmp_path / "u", console_key="0x29", action_channels={"hire_advisor": "ui"}))
+        console_dir=tmp_path / "u", console_key="0x29",
+        action_channels={**{n: "console" for n in CONSOLE_ACTIONS}, "hire_advisor": "ui"}))
     router = adapter.writer
     assert isinstance(router, ChannelRouter)
     assert router.console.config.directory == tmp_path / "u"
