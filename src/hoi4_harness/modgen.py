@@ -26,11 +26,16 @@ when the committed files drift from what this module would write.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from .actions.catalog import AI_DIRECTIVES
 from .adapters.logtail import SCHEMA_VERSION
+
+if TYPE_CHECKING:
+    from .identifiers import IdentifierIndex
 
 #: The countries a vanilla campaign most plausibly names in a directive.
 DEFAULT_TAGS = (
@@ -224,3 +229,71 @@ def _localisation(tags: tuple[str, ...]) -> str:
             f' llmb_directive_{directive}_desc:0 "Tell the AI to {directive} the selected target."'
         )
     return "\n".join(lines) + "\n"
+
+
+# --- the focus / research probe (#2) -----------------------------------------
+
+PROBE_PATH = "common/scripted_effects/llm_bridge_probe.txt"
+_ID = re.compile(r"^[A-Za-z0-9_.\-]+$")
+
+
+def generate_probe(index: IdentifierIndex) -> GeneratedFile:
+    """The daily probe that says which focus and which technologies are running.
+
+    1.19.5.0 has no variable or loc object for the current focus, and no
+    on_action for a finished one, but it does have triggers that take an id:
+    ``focus_progress``, ``has_completed_focus``, ``has_focus_tree`` and
+    ``is_researching_technology``. So the mod asks, once a day, about every id
+    the install defines and logs the ones that answer yes; the log reader turns
+    a focus or technology that stops answering into the completion event.
+
+    Focuses are gated on the country's focus tree so only its own are tested;
+    shared focuses are gated on any tree that pulls them in. Output is sorted,
+    so it is deterministic for a given playset.
+    """
+    def ok(ident: str) -> bool:
+        return bool(_ID.match(ident))
+
+    def focus_block(ident: str, indent: str) -> str:
+        return (f"{indent}if = {{ limit = {{ focus_progress = {{ focus = {ident} progress > 0 }} "
+                f"NOT = {{ has_completed_focus = {ident} }} }} "
+                f'log = "LLMB|v{SCHEMA_VERSION}|focus|tag=[THIS.GetTag]|id={ident}" }}')
+
+    out = [
+        HEADER.replace("hoi4-harness mod-directives", "hoi4-harness mod-probe"),
+        "# Daily probe: one `focus` line for the focus being worked on and one",
+        "# `research` line per technology being researched. Called from",
+        "# llm_bridge_emit_state, right after the state line.",
+        "",
+        "llm_bridge_emit_probe = {",
+    ]
+    trees = sorted((t for t in index.trees if t.id and ok(t.id)), key=lambda t: t.id)
+    for tree in trees:
+        ids = sorted(f for f in tree.focuses if ok(f))
+        if not ids:
+            continue
+        out.append(f"\tif = {{ limit = {{ has_focus_tree = {tree.id} }}")
+        out += [focus_block(f, "\t\t") for f in ids]
+        out.append("\t}")
+    shared_users = sorted(t.id for t in trees if t.shared)
+    shared = sorted(f for f in index.shared_focuses if ok(f))
+    if shared and shared_users:
+        users = " ".join(f"has_focus_tree = {t}" for t in shared_users)
+        out.append(f"\tif = {{ limit = {{ OR = {{ {users} }} }}")
+        out += [focus_block(f, "\t\t") for f in shared]
+        out.append("\t}")
+    for tech in sorted(t for t in index.technologies if ok(t)):
+        out.append(
+            f"\tif = {{ limit = {{ is_researching_technology = {tech} }} "
+            f'log = "LLMB|v{SCHEMA_VERSION}|research|tag=[THIS.GetTag]|id={tech}" }}'
+        )
+    out += ["}", ""]
+    return GeneratedFile(PROBE_PATH, "\n".join(out))
+
+
+def write_probe(mod_dir: Path, index: IdentifierIndex) -> Path:
+    item = generate_probe(index)
+    target = mod_dir / item.path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(item.text, encoding="utf-8", newline="\n")
+    return target
