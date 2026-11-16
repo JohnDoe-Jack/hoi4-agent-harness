@@ -18,6 +18,7 @@
     hoi4-harness save-inspect               what a save contains, for mapping it
     hoi4-harness check-scripts              pre-flight the input driver's scripts and calibration
     hoi4-harness mod-directives --tags ...  regenerate the mod's per-target directives
+    hoi4-harness mod-probe                  regenerate the focus/research probe from the install
 
 Everything defaults to the mock adapter and the scripted model, so a fresh clone
 does something useful with no API key and no game installed.
@@ -413,6 +414,23 @@ def cmd_mod_directives(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_mod_probe(args: argparse.Namespace) -> int:
+    """Regenerate the focus/research probe from the configured install."""
+    from . import modgen
+
+    config = _config_from_args(args)
+    if config.game_dir is None:
+        print("mod-probe: point --game-dir (or HOI4_GAME_DIR) at the HOI4 install", file=sys.stderr)
+        return 2
+    try:
+        index = config.build_index()
+    except FileNotFoundError as exc:
+        print(f"mod-probe: {exc}", file=sys.stderr)
+        return 2
+    print(f"wrote {modgen.write_probe(Path(args.mod_dir), index)}")
+    return 0
+
+
 def cmd_index(args: argparse.Namespace) -> int:
     """What exists in the configured playset: countries, focuses, technologies, states."""
     config = _config_from_args(args)
@@ -496,7 +514,7 @@ def cmd_verify_bridge(args: argparse.Namespace) -> int:
     if log is not None and log.exists():
         if checked:
             print()
-        report = check_log(log)
+        report = check_log(log, player=config.country)
         print(report.render())
         checked += 1
         failed |= not report.ok
@@ -767,6 +785,14 @@ def build_parser() -> argparse.ArgumentParser:
     moddir.add_argument("--check", action="store_true",
                         help="exit 1 if the committed files differ from what would be generated")
     moddir.set_defaults(func=cmd_mod_directives)
+
+    probe = sub.add_parser(
+        "mod-probe", help="regenerate the mod's focus/research probe from the game install"
+    )
+    common(probe)
+    probe.add_argument("--mod-dir", dest="mod_dir", default="mod/llm_bridge",
+                       help="the llm_bridge mod folder (default: mod/llm_bridge)")
+    probe.set_defaults(func=cmd_mod_probe)
 
     check_scripts = sub.add_parser(
         "check-scripts", help="pre-flight the input driver's scripts and calibration"

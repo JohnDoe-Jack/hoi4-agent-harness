@@ -26,6 +26,18 @@ def _val(state: GameState, field: str, fmt=str) -> str:
     return "unknown" if not state.known(field) else fmt(getattr(state, field))
 
 
+def _country_label(state: GameState) -> str:
+    """``Sweden (SWE)``, or just ``SWE`` when no adapter knows the name.
+
+    The log reader sees a tag and nothing else, and the identifier index holds
+    no localised names, so "Unknown (SWE)" is what it used to print.
+    """
+    name = (state.country_name or "").strip()
+    if not name or name == "Unknown" or name == state.country:
+        return state.country
+    return f"{name} ({state.country})"
+
+
 def render_full(state: GameState, max_events: int = 6, max_fronts: int = 3) -> str:
     """A complete situation brief.
 
@@ -33,7 +45,7 @@ def render_full(state: GameState, max_events: int = 6, max_fronts: int = 3) -> s
     many the war has -- see observation/fronts.py.
     """
     lines: list[str] = []
-    lines.append(f"## {state.country_name} ({state.country}) -- {state.date}")
+    lines.append(f"## {_country_label(state)} -- {state.date}")
 
     lines.append(
         "PP {pp} | stability {stab} | war support {ws} | manpower {mp}".format(
