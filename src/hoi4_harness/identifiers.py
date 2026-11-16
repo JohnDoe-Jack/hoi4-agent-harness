@@ -167,6 +167,18 @@ class StateInfo:
 
 
 @dataclass
+class TechPlace:
+    """Where a technology sits in its folder: ``common/technologies`` gives
+    ``position = { x y }`` where ``y`` is a year column (``@1936`` names one) and
+    ``x`` the row. The tree is drawn left to right, so ``column`` runs across the
+    screen and ``row`` down it."""
+
+    folder: str
+    column: int
+    row: int
+
+
+@dataclass
 class IdentifierIndex:
     playset: Playset
     tags: set[str] = field(default_factory=set)
@@ -174,6 +186,8 @@ class IdentifierIndex:
     shared_focuses: dict[str, Focus] = field(default_factory=dict)
     technologies: set[str] = field(default_factory=set)
     states: dict[str, StateInfo] = field(default_factory=dict)
+    tech_places: dict[str, TechPlace] = field(default_factory=dict)
+    _focus_names: dict[str, str] | None = field(default=None, repr=False)
 
     # --- building -------------------------------------------------------------
 
@@ -189,9 +203,13 @@ class IdentifierIndex:
             index._read_focus_file(_parse(path))
         for path in playset.layered("common/technologies"):
             for block in _as_list(_parse(path).get("technologies")):
+                variables = {k: v for k, v in block.items() if k.startswith("@")}
                 for key, value in block.items():
                     if isinstance(value, dict) and not key.startswith("@") and key != "_items":
                         index.technologies.add(key)
+                        place = _tech_place(value, variables)
+                        if place:
+                            index.tech_places[key] = place
         names = index._state_names()
         for path in playset.layered("history/states"):
             for block in _as_list(_parse(path).get("state")):
@@ -246,6 +264,27 @@ class IdentifierIndex:
                 if replacing or key not in names:
                     names[key] = value
         return names
+
+    def focus_name(self, focus_id: str) -> str | None:
+        """The English display name of a focus, or None when none is defined.
+
+        Read on first use and kept for the focus ids this index knows: the
+        English localisation is large and only the input driver needs it.
+        """
+        if self._focus_names is None:
+            wanted = set(self.shared_focuses) | {f for t in self.trees for f in t.focuses}
+            names: dict[str, str] = {}
+            files = [p for p in self.playset.layered("localisation", "*.yml")
+                     if "english" in p.as_posix().lower()]
+            files.sort(key=lambda path: "replace" in path.parent.parts)
+            for path in files:
+                replacing = "replace" in path.parent.parts
+                text = path.read_text(encoding="utf-8-sig", errors="replace")
+                for key, value in re.findall(r'^\s*([\w.]+):\d*\s*"(.*)"', text, flags=re.M):
+                    if key in wanted and (replacing or key not in names):
+                        names[key] = value
+            self._focus_names = names
+        return self._focus_names.get(focus_id)
 
     # --- lookups --------------------------------------------------------------
 
@@ -427,6 +466,28 @@ def _all_values(block, key: str) -> list[str]:
                 else:
                     found += _all_values(v, key)
     return found
+
+
+def _tech_place(block: dict, variables: dict) -> TechPlace | None:
+    folder = _first(block.get("folder"))
+    if not isinstance(folder, dict) or not folder.get("name"):
+        return None
+    position = _first(folder.get("position"))
+    if not isinstance(position, dict):
+        return None
+
+    def number(raw) -> int | None:
+        text = str(raw).strip()
+        text = str(variables.get(text, text)).strip() if text.startswith("@") else text
+        try:
+            return int(float(text))
+        except ValueError:
+            return None
+
+    row, column = number(position.get("x")), number(position.get("y"))
+    if row is None or column is None:
+        return None
+    return TechPlace(folder=str(folder["name"]), column=column, row=row)
 
 
 def _focus(block) -> Focus | None:
