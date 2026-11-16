@@ -50,9 +50,11 @@ silently wrong numbers.
 
 ## Status
 
-Skeleton, and the parts that are unverified say so in the file that contains
-them. The script token names (variables, scope functions, on_action names,
-`ai_strategy` types) are the bit that moves between HOI4 versions — check them
+Verified on HOI4 1.19.5.0 for telemetry, focus and research probes, and for
+raising directives and theater posture (the telemetry line shown above is schema
+v3). Still unverified: research completion through the `techs` counter, the `owned`
+field, and whether the game's AI acts on a directive. The script token names (variables, scope functions, on_action
+names, `ai_strategy` types) are the bit that moves between HOI4 versions — check them
 against `common/` in your own install before trusting a run. See
 [../docs/mod-bridge.md](../docs/mod-bridge.md).
 
