@@ -73,8 +73,9 @@ def test_an_unknown_key_is_refused():
         keys_with(Wire()).chord("ctrl+nonsense")
 
 
-def test_the_default_sender_says_so_off_windows(monkeypatch):
-    monkeypatch.setattr(keys_module.sys, "platform", "linux")
+def test_the_default_sender_says_so_off_windows(monkeypatch, real_sendinput):
+    monkeypatch.setattr(keys_module.sys, "platform", "linux")   # refused before any SendInput
+    monkeypatch.setattr(keys_module, "_sendinput", real_sendinput)
     with pytest.raises(UnsupportedPlatform, match="Windows"):
         ScanCodeKeys(sleep=lambda s: None).chord("space")
 
