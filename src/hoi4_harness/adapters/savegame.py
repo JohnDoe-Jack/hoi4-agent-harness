@@ -96,19 +96,19 @@ def country_block(text: str, tag: str) -> dict | None:
     which is why ``hoi4-harness save-inspect`` exists: it shows what a real save
     calls it instead of this guessing harder.
     """
-    match = re.search(r"^countries[ 	]*=[ 	]*\{", text, flags=re.M)
+    match = re.search(r"^countries[ \t]*=[ \t]*\{", text, flags=re.M)
     if not match:
         return None
     start = match.end() - 1
     body = text[start:matching_brace(text, start)]
     # Countries sit at the indentation of the first key inside the container.
     # Anything deeper is nested in another country (GER={ SWE={opinion=...} }),
-    # and [ 	] rather than \s keeps the match from running across a newline.
-    first = re.compile(r"^([ 	]*)[A-Za-z0-9_\-]+[ 	]*=", re.M).search(body, 1)
+    # and [ \t] rather than \s keeps the match from running across a newline.
+    first = re.compile(r"^([ \t]*)[A-Za-z0-9_\-]+[ \t]*=", re.M).search(body, 1)
     if not first:
         return None
     indent = first.group(1)
-    found = re.search(rf"^{re.escape(indent)}{re.escape(tag)}[ 	]*=[ 	]*\{{", body, flags=re.M)
+    found = re.search(rf"^{re.escape(indent)}{re.escape(tag)}[ \t]*=[ \t]*\{{", body, flags=re.M)
     if not found:
         return None
     chunk = body[found.start(): matching_brace(body, found.end() - 1)]
@@ -153,7 +153,7 @@ def matching_brace(text: str, open_at: int) -> int:
 
 def top_block(text: str, key: str) -> dict | None:
     """Parse the one top-level ``key={ ... }`` block, whole, or None if absent."""
-    match = re.search(rf"^{re.escape(key)}[ 	]*=[ 	]*\{{", text, flags=re.M)
+    match = re.search(rf"^{re.escape(key)}[ \t]*=[ \t]*\{{", text, flags=re.M)
     if not match:
         return None
     end = matching_brace(text, match.end() - 1)
