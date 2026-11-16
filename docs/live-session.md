@@ -75,15 +75,20 @@ If both show up, directives and posture are verifiable through the log. Take
 
 ## 5. A save (#6)
 
-Save the game (not ironman), then:
+Saves are binary by default. Set `save_as_binary=no` in `settings.txt` (in the
+`Hearts of Iron IV` folder under Documents), save the game (not ironman), then:
 
 ```bash
-hoi4-harness save-inspect
+hoi4-harness observe --adapter savegame
 ```
 
-Paste the output into #6. It lists the save's top-level blocks and the player
-country's own keys with sample values; `_to_state` gets written from that, one
-field at a time.
+The brief should carry real numbers: political power, manpower, factory counts,
+the running focus, research slots, production lines and divisions by template.
+Stability and war support appear only with the LLM Bridge mod loaded (the save
+stores their base values, not what the game shows); without it the brief says
+`unknown`. `hoi4-harness save-inspect` lists what a save contains if a field
+looks wrong. What each field reads from is in the savegame section of
+[adapters.md](adapters.md).
 
 ## 6. Clicking (#3, #8)
 
