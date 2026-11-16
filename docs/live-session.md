@@ -87,18 +87,30 @@ field at a time.
 
 ## 6. Clicking (#3, #8)
 
+Keys reach HOI4 only as hardware scan codes (not pyautogui's), and the panel
+hotkeys are the 1.19.5 ones: `alt+q` focus, `w` research, `t` construction, `y`
+production, `q` political, `shift+q` decisions, `space` pause. Escape is never
+sent: with no panel open it opens the game menu, which eats the keys after it.
+
 ```bash
-cp profiles/ui_scripts.example.json runs/ui_scripts.json
+cp profiles/ui_scripts.1.19.json runs/ui_scripts.json
 ```
 
-Walk each script in the file by hand in the game and fix every step that does
-not match what you see (the template is guesses). Then record the click targets
-the scripts name:
+The click paths are recorded for 1.19.5 at 1920x1080 (the keys, and the focus and
+map-search flows, were run in the game). Record the click targets they name at
+your resolution, with `--game-dir` set so names and tech positions resolve:
 
 ```bash
-hoi4-harness calibrate
+hoi4-harness calibrate --game-dir "<HOI4 install>"
 hoi4-harness check-scripts     # every placeholder valid, every concrete target calibrated
 ```
+
+Each action is a different flow: **focus** is keyboard only (`alt+q`, `ctrl+f`,
+the focus's name, `shift+enter`); **construction** is `t`, a building icon, the
+map search for the state, a click at the map centre; **research** is `w`, a free
+slot, a folder tab, then a computed grid cell; **hire_advisor** is `q`, a slot,
+a candidate. Watch for a panel that does not close itself afterwards; there is no
+Escape to rely on.
 
 Try one action at a time, dry run first (it logs the path and sends nothing),
 then live:

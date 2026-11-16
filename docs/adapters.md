@@ -114,7 +114,14 @@ routine ticks.
 
 ## input_driver — mechanics and verification done, click paths recorded per install
 
-The write side. Hotkeys (`HOTKEYS`) are preferred over coordinates because they
+The write side. Keyboard input is sent as **hardware scan codes** through
+`SendInput` ([`keys.py`](../src/hoi4_harness/adapters/keys.py), Windows only,
+a clear error elsewhere): HOI4 1.19 never sees the key events pyautogui posts
+(`pyautogui.press('space')` with the game focused did nothing; a scan-code
+keystroke toggled pause every time). Mouse clicks still go through pyautogui,
+which works. Text is typed per character (shift for capitals and `_`); a
+character with no scan code (`ö`) cannot be typed, and the whole string is
+refused before any key is sent. Hotkeys (`HOTKEYS`) are preferred over coordinates because they
 survive resolution and UI-scale changes; coordinates live in a calibration dict,
 not in code — `hoi4-harness calibrate` writes it (with the screen resolution it
 was captured at), and loading a calibration from another resolution is refused
@@ -131,6 +138,31 @@ which the agent can read and act on like any other rejection.
 A platform with no implemented check reports **unsupported** and refuses, rather
 than passing. A guard that always returns true is worse than no guard, because it
 gets trusted. `--no-window-guard` is the deliberate opt-out.
+
+### Hotkeys (1.19.5)
+
+`HOTKEYS` comes from `interface/topbar.gui` (`topbar_shortcuts()` reads it, for
+re-deriving on another version or under a mod) and was tried in the game:
+
+| Panel | Key | Source |
+|---|---|---|
+| national focus | `alt+q` | `national_focus_shortcut` |
+| research | `w` | keybind `research_open` |
+| construction | `t` | `construction_button` |
+| production | `y` | `production_button` |
+| decisions | `shift+q` | `decisionview_button` |
+| political / advisors | `q` | `player_flag` |
+| international market | `e` | |
+| trade | `r` | `trade_button` |
+| pause | `space` | `pause_button_date` |
+| speed | `kp_plus` / `kp_minus` | `button_speedup` / `button_speeddown` |
+
+There is no diplomacy panel hotkey. A script's `press` step takes either a key or
+chord (`ctrl+f`) or one of these names (`national_focus`).
+
+**Escape is never sent by a script.** With no panel open it opens the game menu,
+which then swallows every following key, and most of these panels close
+themselves when the action completes. A script that presses it is refused at load.
 
 ### The clock: a toggle, so look before pressing
 
@@ -168,14 +200,27 @@ kept apart on purpose ([`ui_scripts.py`](../src/hoi4_harness/adapters/ui_scripts
 - **The click path** is data. It depends on the game version, the UI scale and
   your layout, so — like coordinates — it lives in a file you record against
   your own game, `<run-dir>/ui_scripts.json` (or `HOI4_UI_SCRIPTS`). Steps are
-  `press`, `click` (a calibrated target), `type` and `wait`, and may carry
-  `{placeholders}` filled from the action's arguments:
+  `press`, `click` (a calibrated target), `type`, `wait` and `repeat` (the step
+  before it, N times in all), and may carry `{placeholders}` filled from the
+  action's arguments:
 
   ```json
   {"schema": 1, "scripts": {"set_national_focus": [
-    {"press": "f"}, {"click": "focus.search"}, {"type": "{focus_id}"},
-    {"click": "focus.first_result"}, {"press": "escape"}]}}
+    {"press": "national_focus"}, {"press": "ctrl+f"}, {"type": "{focus_name}"},
+    {"press": "shift+enter"}]}}
   ```
+
+  Some placeholders are derived from the arguments before any input is sent
+  ([`ui_resolve.py`](../src/hoi4_harness/adapters/ui_resolve.py)), and the action
+  is refused, with nothing sent, when one cannot be:
+
+  | Placeholder | From | Refused when |
+  |---|---|---|
+  | `{focus_name}` | the focus id's English name (`localisation/english`), as its longest ASCII-only run of words | no name, or nothing typable (`[...]` scripted loc, `ö`) |
+  | `{state_name}` | the same, for the state | the same |
+  | `{tech_folder}`, click target `research.tech_point` | the tech's `folder` and `position` in `common/technologies` | the cell is off the screen or on the tab strip (the tree is not scrolled) |
+
+  These need the game's files: pass `--game-dir`.
 
 - **The verification** is code, because it does not depend on the UI: a started
   focus is running, a researched technology is in a slot, a queued building
@@ -212,10 +257,12 @@ never is. Delegated armies are not reported by the mod, so delegation comes
 back `unverified` there — the honest answer until the mod emits it. An action
 with no recorded script is refused, as before.
 
-To set one up: copy [`profiles/ui_scripts.example.json`](../profiles/ui_scripts.example.json)
-— a template whose paths are guesses at the UI, to be checked step by step — to
-your run directory, fix it against what you see, then run `hoi4-harness
-calibrate`, which now walks the targets your scripts click. `calibration.json`
+To set one up on 1.19.5: copy [`profiles/ui_scripts.1.19.json`](../profiles/ui_scripts.1.19.json)
+to `<run-dir>/ui_scripts.json`, then run `hoi4-harness calibrate`, which walks
+exactly the targets it clicks (`calibration.DEFAULT_TARGETS`, kept in step by a
+test). [`ui_scripts.example.json`](../profiles/ui_scripts.example.json) stays as a
+template whose paths are guesses (for the hybrid actions), to be checked step by
+step. `calibration.json`
 in the run directory (or `HOI4_CALIBRATION`) is loaded automatically.
 
 `hoi4-harness check-scripts` is the pre-flight: the scripts parse, every
@@ -223,6 +270,44 @@ in the run directory (or `HOI4_CALIBRATION`) is loaded automatically.
 file loads, not on the first live attempt), and every concrete click target has
 a calibrated coordinate. Templated targets are listed with the values calibrated
 so far.
+
+### The five peacetime click paths (1.19.5)
+
+What was run in the live game is marked; the click targets are recorded per
+install.
+
+- **set_national_focus** (keys verified end to end): `alt+q` opens the focus
+  tree, `ctrl+f` selects its search bar, the focus's *localised name* is typed
+  (the search matches names and descriptions; "Defense Act" showed "1/3 Found"
+  and scrolled the tree to it), and `shift+enter` starts the current found focus
+  and closes the window by itself. Also in the game's help: `ctrl+tab` /
+  `ctrl+shift+tab` cycle the found focuses, `alt+enter` starts and keeps the window
+  open. No click targets.
+- **queue_construction**: `t`, click the building's icon
+  (`construction.building.<building>`), then the **map search** (`ctrl+f` when the
+  focus tree is not open; also the magnifier at the bottom right) takes the state
+  name; clicking its first row (`map.search.first_result`) centres and zooms the
+  camera on that state, so a click on the map centre (`map.centre`) lands in it,
+  repeated `count` times. State names are `STATE_<n>` localisation.
+- **start_research**: `w` opens Research with three slots; clicking a free one
+  (`research.free_slot`) opens the tech tree, folder tabs across the top
+  (`research.tab.<folder>`) and technologies on a grid with year columns. There is
+  no search box, so the point is computed: each tech's `position = { x y }` in
+  `common/technologies` is (row, year column); the grid is three calibrated points
+  (`research.grid.origin`, `.col1`, `.row1`: the centres of cells (0,0), (1,0),
+  (0,1)). Optional corrections: `research.origin.<folder>` and an exact
+  `research.tech.<id>`. The GUI draws sub-trees of a folder at different offsets, so
+  the grid is exact only within one; check a tech from each folder you use.
+- **hire_advisor**: `q` opens Political; advisor slots and candidates are icons
+  (`politics.slot.<slot>`, `politics.candidate.<advisor_id>`), calibrated per name.
+- **set_production**: a draft; `y` and a guess at the click path. Not walked in
+  the game.
+
+What proves each one: the running focus and the research slots when the reader
+reports them (the mod's `LLMB|v2|focus` and `research` probe lines), else
+**unverified**; a queued building only when it completes or when the reader shows
+the queue (**unverified** through the log reader); an advisor by the political
+power it costs.
 
 ## composite
 
