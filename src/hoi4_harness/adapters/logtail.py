@@ -394,6 +394,7 @@ class LogTailAdapter(GameAdapter):
     def _close_tick(self, tag: str, tick: dict) -> None:
         last = self._closed.get(tag)
         self._closed[tag] = tick
+        self._state.telemetry_ticks = (self._state.telemetry_ticks or 0) + 1
         self._show_tick(tick)
         if last is None:
             return

@@ -178,6 +178,10 @@ class GameState:
     country: str = "___"
     country_name: str = "Unknown"
     speed: int = 0                      # 0 = paused
+    #: Complete days of telemetry the reader has seen, for readers that see the
+    #: game one tick at a time (the log tail). None for readers that see it whole.
+    #: Verification uses it to tell "unchanged" from "not looked at again yet".
+    telemetry_ticks: int | None = None
     political_power: float = 0.0
     stability: float = 0.0
     war_support: float = 0.0

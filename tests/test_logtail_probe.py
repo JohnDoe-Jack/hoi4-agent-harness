@@ -122,3 +122,8 @@ def test_the_committed_probe_is_generated_and_called_by_the_telemetry():
     assert "LLMB|v2|focus|tag=[THIS.GetTag]|id=" in probe
     telemetry = (MOD / "common/scripted_effects/llm_bridge_telemetry.txt").read_text(encoding="utf-8")
     assert "llm_bridge_emit_probe = yes" in telemetry
+
+
+def test_the_reader_counts_complete_days_of_telemetry(tmp_path):
+    assert read(tmp_path, state(2), focus(2, "SWE_rearm")).telemetry_ticks is None
+    assert read(tmp_path, state(2), state(3), state(4)).telemetry_ticks == 2

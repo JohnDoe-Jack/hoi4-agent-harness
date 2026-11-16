@@ -336,6 +336,15 @@ def verify(
         unseen = [name for name in needs if not state.known(name)]
         return unseen, None if unseen else check(before, state, call.arguments)
 
+    def no_fresh_day(state: GameState) -> bool:
+        # A reader that sees the game a tick at a time has said nothing new until
+        # a day that *began after the input* has closed: the next close is the
+        # day that was already open when the keys went in. Seen live: a paused
+        # game reported a focus it had just started as "did not change".
+        if before.telemetry_ticks is None:
+            return False
+        return (state.telemetry_ticks or 0) < before.telemetry_ticks + 2
+
     waited = 0.0
     unseen, problem = unseen_or_problem(after)
     while (unseen or problem is not None) and waited < timeout:
@@ -343,6 +352,11 @@ def verify(
         waited += poll
         after = read_state()
         unseen, problem = unseen_or_problem(after)
+    if problem is not None and not unseen and no_fresh_day(after):
+        return Outcome(False, "unverified", (
+            "input sent, but the game has not run a full day since, so the reader has nothing "
+            "new to check it against (paused?). Treat it as not done until a later brief shows it."
+        ))
     if unseen:
         return Outcome(False, "unverified", (
             f"input sent, but the reader cannot see {', '.join(unseen)}, so the change could not "
