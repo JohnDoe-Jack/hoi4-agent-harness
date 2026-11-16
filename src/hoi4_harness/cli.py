@@ -496,7 +496,7 @@ def cmd_verify_bridge(args: argparse.Namespace) -> int:
     if log is not None and log.exists():
         if checked:
             print()
-        report = check_log(log)
+        report = check_log(log, player=config.country)
         print(report.render())
         checked += 1
         failed |= not report.ok
