@@ -708,6 +708,263 @@ llm_bridge_raise_ignore = {
 	if = { limit = { has_country_flag = llmb_target_ETH } set_country_flag = llmb_ignore_ETH log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=14|detail=ignore ETH" }
 }
 
+llm_bridge_clear_theater_postures = {
+	clr_country_flag = llmb_posture_defensive_GER
+	clr_country_flag = llmb_posture_defensive_ENG
+	clr_country_flag = llmb_posture_defensive_FRA
+	clr_country_flag = llmb_posture_defensive_ITA
+	clr_country_flag = llmb_posture_defensive_SOV
+	clr_country_flag = llmb_posture_defensive_USA
+	clr_country_flag = llmb_posture_defensive_JAP
+	clr_country_flag = llmb_posture_defensive_CHI
+	clr_country_flag = llmb_posture_defensive_PRC
+	clr_country_flag = llmb_posture_defensive_MAN
+	clr_country_flag = llmb_posture_defensive_POL
+	clr_country_flag = llmb_posture_defensive_CZE
+	clr_country_flag = llmb_posture_defensive_AUS
+	clr_country_flag = llmb_posture_defensive_HUN
+	clr_country_flag = llmb_posture_defensive_ROM
+	clr_country_flag = llmb_posture_defensive_YUG
+	clr_country_flag = llmb_posture_defensive_GRE
+	clr_country_flag = llmb_posture_defensive_BUL
+	clr_country_flag = llmb_posture_defensive_ALB
+	clr_country_flag = llmb_posture_defensive_TUR
+	clr_country_flag = llmb_posture_defensive_SPR
+	clr_country_flag = llmb_posture_defensive_POR
+	clr_country_flag = llmb_posture_defensive_BEL
+	clr_country_flag = llmb_posture_defensive_HOL
+	clr_country_flag = llmb_posture_defensive_LUX
+	clr_country_flag = llmb_posture_defensive_DEN
+	clr_country_flag = llmb_posture_defensive_NOR
+	clr_country_flag = llmb_posture_defensive_SWE
+	clr_country_flag = llmb_posture_defensive_FIN
+	clr_country_flag = llmb_posture_defensive_EST
+	clr_country_flag = llmb_posture_defensive_LAT
+	clr_country_flag = llmb_posture_defensive_LIT
+	clr_country_flag = llmb_posture_defensive_SWI
+	clr_country_flag = llmb_posture_defensive_IRE
+	clr_country_flag = llmb_posture_defensive_CAN
+	clr_country_flag = llmb_posture_defensive_AST
+	clr_country_flag = llmb_posture_defensive_NZL
+	clr_country_flag = llmb_posture_defensive_SAF
+	clr_country_flag = llmb_posture_defensive_RAJ
+	clr_country_flag = llmb_posture_defensive_SIA
+	clr_country_flag = llmb_posture_defensive_PHI
+	clr_country_flag = llmb_posture_defensive_MEX
+	clr_country_flag = llmb_posture_defensive_BRA
+	clr_country_flag = llmb_posture_defensive_ARG
+	clr_country_flag = llmb_posture_defensive_PER
+	clr_country_flag = llmb_posture_defensive_IRQ
+	clr_country_flag = llmb_posture_defensive_SAU
+	clr_country_flag = llmb_posture_defensive_EGY
+	clr_country_flag = llmb_posture_defensive_ETH
+	clr_country_flag = llmb_posture_offensive_GER
+	clr_country_flag = llmb_posture_offensive_ENG
+	clr_country_flag = llmb_posture_offensive_FRA
+	clr_country_flag = llmb_posture_offensive_ITA
+	clr_country_flag = llmb_posture_offensive_SOV
+	clr_country_flag = llmb_posture_offensive_USA
+	clr_country_flag = llmb_posture_offensive_JAP
+	clr_country_flag = llmb_posture_offensive_CHI
+	clr_country_flag = llmb_posture_offensive_PRC
+	clr_country_flag = llmb_posture_offensive_MAN
+	clr_country_flag = llmb_posture_offensive_POL
+	clr_country_flag = llmb_posture_offensive_CZE
+	clr_country_flag = llmb_posture_offensive_AUS
+	clr_country_flag = llmb_posture_offensive_HUN
+	clr_country_flag = llmb_posture_offensive_ROM
+	clr_country_flag = llmb_posture_offensive_YUG
+	clr_country_flag = llmb_posture_offensive_GRE
+	clr_country_flag = llmb_posture_offensive_BUL
+	clr_country_flag = llmb_posture_offensive_ALB
+	clr_country_flag = llmb_posture_offensive_TUR
+	clr_country_flag = llmb_posture_offensive_SPR
+	clr_country_flag = llmb_posture_offensive_POR
+	clr_country_flag = llmb_posture_offensive_BEL
+	clr_country_flag = llmb_posture_offensive_HOL
+	clr_country_flag = llmb_posture_offensive_LUX
+	clr_country_flag = llmb_posture_offensive_DEN
+	clr_country_flag = llmb_posture_offensive_NOR
+	clr_country_flag = llmb_posture_offensive_SWE
+	clr_country_flag = llmb_posture_offensive_FIN
+	clr_country_flag = llmb_posture_offensive_EST
+	clr_country_flag = llmb_posture_offensive_LAT
+	clr_country_flag = llmb_posture_offensive_LIT
+	clr_country_flag = llmb_posture_offensive_SWI
+	clr_country_flag = llmb_posture_offensive_IRE
+	clr_country_flag = llmb_posture_offensive_CAN
+	clr_country_flag = llmb_posture_offensive_AST
+	clr_country_flag = llmb_posture_offensive_NZL
+	clr_country_flag = llmb_posture_offensive_SAF
+	clr_country_flag = llmb_posture_offensive_RAJ
+	clr_country_flag = llmb_posture_offensive_SIA
+	clr_country_flag = llmb_posture_offensive_PHI
+	clr_country_flag = llmb_posture_offensive_MEX
+	clr_country_flag = llmb_posture_offensive_BRA
+	clr_country_flag = llmb_posture_offensive_ARG
+	clr_country_flag = llmb_posture_offensive_PER
+	clr_country_flag = llmb_posture_offensive_IRQ
+	clr_country_flag = llmb_posture_offensive_SAU
+	clr_country_flag = llmb_posture_offensive_EGY
+	clr_country_flag = llmb_posture_offensive_ETH
+}
+
+llm_bridge_raise_theater_defensive = {
+	if = { limit = { has_country_flag = llmb_target_GER } clr_country_flag = llmb_posture_defensive_GER clr_country_flag = llmb_posture_offensive_GER set_country_flag = llmb_posture_defensive_GER log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive GER" }
+	if = { limit = { has_country_flag = llmb_target_ENG } clr_country_flag = llmb_posture_defensive_ENG clr_country_flag = llmb_posture_offensive_ENG set_country_flag = llmb_posture_defensive_ENG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive ENG" }
+	if = { limit = { has_country_flag = llmb_target_FRA } clr_country_flag = llmb_posture_defensive_FRA clr_country_flag = llmb_posture_offensive_FRA set_country_flag = llmb_posture_defensive_FRA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive FRA" }
+	if = { limit = { has_country_flag = llmb_target_ITA } clr_country_flag = llmb_posture_defensive_ITA clr_country_flag = llmb_posture_offensive_ITA set_country_flag = llmb_posture_defensive_ITA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive ITA" }
+	if = { limit = { has_country_flag = llmb_target_SOV } clr_country_flag = llmb_posture_defensive_SOV clr_country_flag = llmb_posture_offensive_SOV set_country_flag = llmb_posture_defensive_SOV log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive SOV" }
+	if = { limit = { has_country_flag = llmb_target_USA } clr_country_flag = llmb_posture_defensive_USA clr_country_flag = llmb_posture_offensive_USA set_country_flag = llmb_posture_defensive_USA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive USA" }
+	if = { limit = { has_country_flag = llmb_target_JAP } clr_country_flag = llmb_posture_defensive_JAP clr_country_flag = llmb_posture_offensive_JAP set_country_flag = llmb_posture_defensive_JAP log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive JAP" }
+	if = { limit = { has_country_flag = llmb_target_CHI } clr_country_flag = llmb_posture_defensive_CHI clr_country_flag = llmb_posture_offensive_CHI set_country_flag = llmb_posture_defensive_CHI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive CHI" }
+	if = { limit = { has_country_flag = llmb_target_PRC } clr_country_flag = llmb_posture_defensive_PRC clr_country_flag = llmb_posture_offensive_PRC set_country_flag = llmb_posture_defensive_PRC log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive PRC" }
+	if = { limit = { has_country_flag = llmb_target_MAN } clr_country_flag = llmb_posture_defensive_MAN clr_country_flag = llmb_posture_offensive_MAN set_country_flag = llmb_posture_defensive_MAN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive MAN" }
+	if = { limit = { has_country_flag = llmb_target_POL } clr_country_flag = llmb_posture_defensive_POL clr_country_flag = llmb_posture_offensive_POL set_country_flag = llmb_posture_defensive_POL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive POL" }
+	if = { limit = { has_country_flag = llmb_target_CZE } clr_country_flag = llmb_posture_defensive_CZE clr_country_flag = llmb_posture_offensive_CZE set_country_flag = llmb_posture_defensive_CZE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive CZE" }
+	if = { limit = { has_country_flag = llmb_target_AUS } clr_country_flag = llmb_posture_defensive_AUS clr_country_flag = llmb_posture_offensive_AUS set_country_flag = llmb_posture_defensive_AUS log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive AUS" }
+	if = { limit = { has_country_flag = llmb_target_HUN } clr_country_flag = llmb_posture_defensive_HUN clr_country_flag = llmb_posture_offensive_HUN set_country_flag = llmb_posture_defensive_HUN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive HUN" }
+	if = { limit = { has_country_flag = llmb_target_ROM } clr_country_flag = llmb_posture_defensive_ROM clr_country_flag = llmb_posture_offensive_ROM set_country_flag = llmb_posture_defensive_ROM log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive ROM" }
+	if = { limit = { has_country_flag = llmb_target_YUG } clr_country_flag = llmb_posture_defensive_YUG clr_country_flag = llmb_posture_offensive_YUG set_country_flag = llmb_posture_defensive_YUG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive YUG" }
+	if = { limit = { has_country_flag = llmb_target_GRE } clr_country_flag = llmb_posture_defensive_GRE clr_country_flag = llmb_posture_offensive_GRE set_country_flag = llmb_posture_defensive_GRE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive GRE" }
+	if = { limit = { has_country_flag = llmb_target_BUL } clr_country_flag = llmb_posture_defensive_BUL clr_country_flag = llmb_posture_offensive_BUL set_country_flag = llmb_posture_defensive_BUL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive BUL" }
+	if = { limit = { has_country_flag = llmb_target_ALB } clr_country_flag = llmb_posture_defensive_ALB clr_country_flag = llmb_posture_offensive_ALB set_country_flag = llmb_posture_defensive_ALB log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive ALB" }
+	if = { limit = { has_country_flag = llmb_target_TUR } clr_country_flag = llmb_posture_defensive_TUR clr_country_flag = llmb_posture_offensive_TUR set_country_flag = llmb_posture_defensive_TUR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive TUR" }
+	if = { limit = { has_country_flag = llmb_target_SPR } clr_country_flag = llmb_posture_defensive_SPR clr_country_flag = llmb_posture_offensive_SPR set_country_flag = llmb_posture_defensive_SPR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive SPR" }
+	if = { limit = { has_country_flag = llmb_target_POR } clr_country_flag = llmb_posture_defensive_POR clr_country_flag = llmb_posture_offensive_POR set_country_flag = llmb_posture_defensive_POR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive POR" }
+	if = { limit = { has_country_flag = llmb_target_BEL } clr_country_flag = llmb_posture_defensive_BEL clr_country_flag = llmb_posture_offensive_BEL set_country_flag = llmb_posture_defensive_BEL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive BEL" }
+	if = { limit = { has_country_flag = llmb_target_HOL } clr_country_flag = llmb_posture_defensive_HOL clr_country_flag = llmb_posture_offensive_HOL set_country_flag = llmb_posture_defensive_HOL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive HOL" }
+	if = { limit = { has_country_flag = llmb_target_LUX } clr_country_flag = llmb_posture_defensive_LUX clr_country_flag = llmb_posture_offensive_LUX set_country_flag = llmb_posture_defensive_LUX log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive LUX" }
+	if = { limit = { has_country_flag = llmb_target_DEN } clr_country_flag = llmb_posture_defensive_DEN clr_country_flag = llmb_posture_offensive_DEN set_country_flag = llmb_posture_defensive_DEN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive DEN" }
+	if = { limit = { has_country_flag = llmb_target_NOR } clr_country_flag = llmb_posture_defensive_NOR clr_country_flag = llmb_posture_offensive_NOR set_country_flag = llmb_posture_defensive_NOR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive NOR" }
+	if = { limit = { has_country_flag = llmb_target_SWE } clr_country_flag = llmb_posture_defensive_SWE clr_country_flag = llmb_posture_offensive_SWE set_country_flag = llmb_posture_defensive_SWE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive SWE" }
+	if = { limit = { has_country_flag = llmb_target_FIN } clr_country_flag = llmb_posture_defensive_FIN clr_country_flag = llmb_posture_offensive_FIN set_country_flag = llmb_posture_defensive_FIN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive FIN" }
+	if = { limit = { has_country_flag = llmb_target_EST } clr_country_flag = llmb_posture_defensive_EST clr_country_flag = llmb_posture_offensive_EST set_country_flag = llmb_posture_defensive_EST log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive EST" }
+	if = { limit = { has_country_flag = llmb_target_LAT } clr_country_flag = llmb_posture_defensive_LAT clr_country_flag = llmb_posture_offensive_LAT set_country_flag = llmb_posture_defensive_LAT log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive LAT" }
+	if = { limit = { has_country_flag = llmb_target_LIT } clr_country_flag = llmb_posture_defensive_LIT clr_country_flag = llmb_posture_offensive_LIT set_country_flag = llmb_posture_defensive_LIT log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive LIT" }
+	if = { limit = { has_country_flag = llmb_target_SWI } clr_country_flag = llmb_posture_defensive_SWI clr_country_flag = llmb_posture_offensive_SWI set_country_flag = llmb_posture_defensive_SWI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive SWI" }
+	if = { limit = { has_country_flag = llmb_target_IRE } clr_country_flag = llmb_posture_defensive_IRE clr_country_flag = llmb_posture_offensive_IRE set_country_flag = llmb_posture_defensive_IRE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive IRE" }
+	if = { limit = { has_country_flag = llmb_target_CAN } clr_country_flag = llmb_posture_defensive_CAN clr_country_flag = llmb_posture_offensive_CAN set_country_flag = llmb_posture_defensive_CAN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive CAN" }
+	if = { limit = { has_country_flag = llmb_target_AST } clr_country_flag = llmb_posture_defensive_AST clr_country_flag = llmb_posture_offensive_AST set_country_flag = llmb_posture_defensive_AST log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive AST" }
+	if = { limit = { has_country_flag = llmb_target_NZL } clr_country_flag = llmb_posture_defensive_NZL clr_country_flag = llmb_posture_offensive_NZL set_country_flag = llmb_posture_defensive_NZL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive NZL" }
+	if = { limit = { has_country_flag = llmb_target_SAF } clr_country_flag = llmb_posture_defensive_SAF clr_country_flag = llmb_posture_offensive_SAF set_country_flag = llmb_posture_defensive_SAF log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive SAF" }
+	if = { limit = { has_country_flag = llmb_target_RAJ } clr_country_flag = llmb_posture_defensive_RAJ clr_country_flag = llmb_posture_offensive_RAJ set_country_flag = llmb_posture_defensive_RAJ log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive RAJ" }
+	if = { limit = { has_country_flag = llmb_target_SIA } clr_country_flag = llmb_posture_defensive_SIA clr_country_flag = llmb_posture_offensive_SIA set_country_flag = llmb_posture_defensive_SIA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive SIA" }
+	if = { limit = { has_country_flag = llmb_target_PHI } clr_country_flag = llmb_posture_defensive_PHI clr_country_flag = llmb_posture_offensive_PHI set_country_flag = llmb_posture_defensive_PHI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive PHI" }
+	if = { limit = { has_country_flag = llmb_target_MEX } clr_country_flag = llmb_posture_defensive_MEX clr_country_flag = llmb_posture_offensive_MEX set_country_flag = llmb_posture_defensive_MEX log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive MEX" }
+	if = { limit = { has_country_flag = llmb_target_BRA } clr_country_flag = llmb_posture_defensive_BRA clr_country_flag = llmb_posture_offensive_BRA set_country_flag = llmb_posture_defensive_BRA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive BRA" }
+	if = { limit = { has_country_flag = llmb_target_ARG } clr_country_flag = llmb_posture_defensive_ARG clr_country_flag = llmb_posture_offensive_ARG set_country_flag = llmb_posture_defensive_ARG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive ARG" }
+	if = { limit = { has_country_flag = llmb_target_PER } clr_country_flag = llmb_posture_defensive_PER clr_country_flag = llmb_posture_offensive_PER set_country_flag = llmb_posture_defensive_PER log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive PER" }
+	if = { limit = { has_country_flag = llmb_target_IRQ } clr_country_flag = llmb_posture_defensive_IRQ clr_country_flag = llmb_posture_offensive_IRQ set_country_flag = llmb_posture_defensive_IRQ log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive IRQ" }
+	if = { limit = { has_country_flag = llmb_target_SAU } clr_country_flag = llmb_posture_defensive_SAU clr_country_flag = llmb_posture_offensive_SAU set_country_flag = llmb_posture_defensive_SAU log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive SAU" }
+	if = { limit = { has_country_flag = llmb_target_EGY } clr_country_flag = llmb_posture_defensive_EGY clr_country_flag = llmb_posture_offensive_EGY set_country_flag = llmb_posture_defensive_EGY log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive EGY" }
+	if = { limit = { has_country_flag = llmb_target_ETH } clr_country_flag = llmb_posture_defensive_ETH clr_country_flag = llmb_posture_offensive_ETH set_country_flag = llmb_posture_defensive_ETH log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=defensive ETH" }
+}
+
+llm_bridge_raise_theater_offensive = {
+	if = { limit = { has_country_flag = llmb_target_GER } clr_country_flag = llmb_posture_defensive_GER clr_country_flag = llmb_posture_offensive_GER set_country_flag = llmb_posture_offensive_GER log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive GER" }
+	if = { limit = { has_country_flag = llmb_target_ENG } clr_country_flag = llmb_posture_defensive_ENG clr_country_flag = llmb_posture_offensive_ENG set_country_flag = llmb_posture_offensive_ENG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive ENG" }
+	if = { limit = { has_country_flag = llmb_target_FRA } clr_country_flag = llmb_posture_defensive_FRA clr_country_flag = llmb_posture_offensive_FRA set_country_flag = llmb_posture_offensive_FRA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive FRA" }
+	if = { limit = { has_country_flag = llmb_target_ITA } clr_country_flag = llmb_posture_defensive_ITA clr_country_flag = llmb_posture_offensive_ITA set_country_flag = llmb_posture_offensive_ITA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive ITA" }
+	if = { limit = { has_country_flag = llmb_target_SOV } clr_country_flag = llmb_posture_defensive_SOV clr_country_flag = llmb_posture_offensive_SOV set_country_flag = llmb_posture_offensive_SOV log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive SOV" }
+	if = { limit = { has_country_flag = llmb_target_USA } clr_country_flag = llmb_posture_defensive_USA clr_country_flag = llmb_posture_offensive_USA set_country_flag = llmb_posture_offensive_USA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive USA" }
+	if = { limit = { has_country_flag = llmb_target_JAP } clr_country_flag = llmb_posture_defensive_JAP clr_country_flag = llmb_posture_offensive_JAP set_country_flag = llmb_posture_offensive_JAP log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive JAP" }
+	if = { limit = { has_country_flag = llmb_target_CHI } clr_country_flag = llmb_posture_defensive_CHI clr_country_flag = llmb_posture_offensive_CHI set_country_flag = llmb_posture_offensive_CHI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive CHI" }
+	if = { limit = { has_country_flag = llmb_target_PRC } clr_country_flag = llmb_posture_defensive_PRC clr_country_flag = llmb_posture_offensive_PRC set_country_flag = llmb_posture_offensive_PRC log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive PRC" }
+	if = { limit = { has_country_flag = llmb_target_MAN } clr_country_flag = llmb_posture_defensive_MAN clr_country_flag = llmb_posture_offensive_MAN set_country_flag = llmb_posture_offensive_MAN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive MAN" }
+	if = { limit = { has_country_flag = llmb_target_POL } clr_country_flag = llmb_posture_defensive_POL clr_country_flag = llmb_posture_offensive_POL set_country_flag = llmb_posture_offensive_POL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive POL" }
+	if = { limit = { has_country_flag = llmb_target_CZE } clr_country_flag = llmb_posture_defensive_CZE clr_country_flag = llmb_posture_offensive_CZE set_country_flag = llmb_posture_offensive_CZE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive CZE" }
+	if = { limit = { has_country_flag = llmb_target_AUS } clr_country_flag = llmb_posture_defensive_AUS clr_country_flag = llmb_posture_offensive_AUS set_country_flag = llmb_posture_offensive_AUS log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive AUS" }
+	if = { limit = { has_country_flag = llmb_target_HUN } clr_country_flag = llmb_posture_defensive_HUN clr_country_flag = llmb_posture_offensive_HUN set_country_flag = llmb_posture_offensive_HUN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive HUN" }
+	if = { limit = { has_country_flag = llmb_target_ROM } clr_country_flag = llmb_posture_defensive_ROM clr_country_flag = llmb_posture_offensive_ROM set_country_flag = llmb_posture_offensive_ROM log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive ROM" }
+	if = { limit = { has_country_flag = llmb_target_YUG } clr_country_flag = llmb_posture_defensive_YUG clr_country_flag = llmb_posture_offensive_YUG set_country_flag = llmb_posture_offensive_YUG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive YUG" }
+	if = { limit = { has_country_flag = llmb_target_GRE } clr_country_flag = llmb_posture_defensive_GRE clr_country_flag = llmb_posture_offensive_GRE set_country_flag = llmb_posture_offensive_GRE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive GRE" }
+	if = { limit = { has_country_flag = llmb_target_BUL } clr_country_flag = llmb_posture_defensive_BUL clr_country_flag = llmb_posture_offensive_BUL set_country_flag = llmb_posture_offensive_BUL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive BUL" }
+	if = { limit = { has_country_flag = llmb_target_ALB } clr_country_flag = llmb_posture_defensive_ALB clr_country_flag = llmb_posture_offensive_ALB set_country_flag = llmb_posture_offensive_ALB log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive ALB" }
+	if = { limit = { has_country_flag = llmb_target_TUR } clr_country_flag = llmb_posture_defensive_TUR clr_country_flag = llmb_posture_offensive_TUR set_country_flag = llmb_posture_offensive_TUR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive TUR" }
+	if = { limit = { has_country_flag = llmb_target_SPR } clr_country_flag = llmb_posture_defensive_SPR clr_country_flag = llmb_posture_offensive_SPR set_country_flag = llmb_posture_offensive_SPR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive SPR" }
+	if = { limit = { has_country_flag = llmb_target_POR } clr_country_flag = llmb_posture_defensive_POR clr_country_flag = llmb_posture_offensive_POR set_country_flag = llmb_posture_offensive_POR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive POR" }
+	if = { limit = { has_country_flag = llmb_target_BEL } clr_country_flag = llmb_posture_defensive_BEL clr_country_flag = llmb_posture_offensive_BEL set_country_flag = llmb_posture_offensive_BEL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive BEL" }
+	if = { limit = { has_country_flag = llmb_target_HOL } clr_country_flag = llmb_posture_defensive_HOL clr_country_flag = llmb_posture_offensive_HOL set_country_flag = llmb_posture_offensive_HOL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive HOL" }
+	if = { limit = { has_country_flag = llmb_target_LUX } clr_country_flag = llmb_posture_defensive_LUX clr_country_flag = llmb_posture_offensive_LUX set_country_flag = llmb_posture_offensive_LUX log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive LUX" }
+	if = { limit = { has_country_flag = llmb_target_DEN } clr_country_flag = llmb_posture_defensive_DEN clr_country_flag = llmb_posture_offensive_DEN set_country_flag = llmb_posture_offensive_DEN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive DEN" }
+	if = { limit = { has_country_flag = llmb_target_NOR } clr_country_flag = llmb_posture_defensive_NOR clr_country_flag = llmb_posture_offensive_NOR set_country_flag = llmb_posture_offensive_NOR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive NOR" }
+	if = { limit = { has_country_flag = llmb_target_SWE } clr_country_flag = llmb_posture_defensive_SWE clr_country_flag = llmb_posture_offensive_SWE set_country_flag = llmb_posture_offensive_SWE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive SWE" }
+	if = { limit = { has_country_flag = llmb_target_FIN } clr_country_flag = llmb_posture_defensive_FIN clr_country_flag = llmb_posture_offensive_FIN set_country_flag = llmb_posture_offensive_FIN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive FIN" }
+	if = { limit = { has_country_flag = llmb_target_EST } clr_country_flag = llmb_posture_defensive_EST clr_country_flag = llmb_posture_offensive_EST set_country_flag = llmb_posture_offensive_EST log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive EST" }
+	if = { limit = { has_country_flag = llmb_target_LAT } clr_country_flag = llmb_posture_defensive_LAT clr_country_flag = llmb_posture_offensive_LAT set_country_flag = llmb_posture_offensive_LAT log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive LAT" }
+	if = { limit = { has_country_flag = llmb_target_LIT } clr_country_flag = llmb_posture_defensive_LIT clr_country_flag = llmb_posture_offensive_LIT set_country_flag = llmb_posture_offensive_LIT log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive LIT" }
+	if = { limit = { has_country_flag = llmb_target_SWI } clr_country_flag = llmb_posture_defensive_SWI clr_country_flag = llmb_posture_offensive_SWI set_country_flag = llmb_posture_offensive_SWI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive SWI" }
+	if = { limit = { has_country_flag = llmb_target_IRE } clr_country_flag = llmb_posture_defensive_IRE clr_country_flag = llmb_posture_offensive_IRE set_country_flag = llmb_posture_offensive_IRE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive IRE" }
+	if = { limit = { has_country_flag = llmb_target_CAN } clr_country_flag = llmb_posture_defensive_CAN clr_country_flag = llmb_posture_offensive_CAN set_country_flag = llmb_posture_offensive_CAN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive CAN" }
+	if = { limit = { has_country_flag = llmb_target_AST } clr_country_flag = llmb_posture_defensive_AST clr_country_flag = llmb_posture_offensive_AST set_country_flag = llmb_posture_offensive_AST log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive AST" }
+	if = { limit = { has_country_flag = llmb_target_NZL } clr_country_flag = llmb_posture_defensive_NZL clr_country_flag = llmb_posture_offensive_NZL set_country_flag = llmb_posture_offensive_NZL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive NZL" }
+	if = { limit = { has_country_flag = llmb_target_SAF } clr_country_flag = llmb_posture_defensive_SAF clr_country_flag = llmb_posture_offensive_SAF set_country_flag = llmb_posture_offensive_SAF log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive SAF" }
+	if = { limit = { has_country_flag = llmb_target_RAJ } clr_country_flag = llmb_posture_defensive_RAJ clr_country_flag = llmb_posture_offensive_RAJ set_country_flag = llmb_posture_offensive_RAJ log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive RAJ" }
+	if = { limit = { has_country_flag = llmb_target_SIA } clr_country_flag = llmb_posture_defensive_SIA clr_country_flag = llmb_posture_offensive_SIA set_country_flag = llmb_posture_offensive_SIA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive SIA" }
+	if = { limit = { has_country_flag = llmb_target_PHI } clr_country_flag = llmb_posture_defensive_PHI clr_country_flag = llmb_posture_offensive_PHI set_country_flag = llmb_posture_offensive_PHI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive PHI" }
+	if = { limit = { has_country_flag = llmb_target_MEX } clr_country_flag = llmb_posture_defensive_MEX clr_country_flag = llmb_posture_offensive_MEX set_country_flag = llmb_posture_offensive_MEX log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive MEX" }
+	if = { limit = { has_country_flag = llmb_target_BRA } clr_country_flag = llmb_posture_defensive_BRA clr_country_flag = llmb_posture_offensive_BRA set_country_flag = llmb_posture_offensive_BRA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive BRA" }
+	if = { limit = { has_country_flag = llmb_target_ARG } clr_country_flag = llmb_posture_defensive_ARG clr_country_flag = llmb_posture_offensive_ARG set_country_flag = llmb_posture_offensive_ARG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive ARG" }
+	if = { limit = { has_country_flag = llmb_target_PER } clr_country_flag = llmb_posture_defensive_PER clr_country_flag = llmb_posture_offensive_PER set_country_flag = llmb_posture_offensive_PER log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive PER" }
+	if = { limit = { has_country_flag = llmb_target_IRQ } clr_country_flag = llmb_posture_defensive_IRQ clr_country_flag = llmb_posture_offensive_IRQ set_country_flag = llmb_posture_offensive_IRQ log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive IRQ" }
+	if = { limit = { has_country_flag = llmb_target_SAU } clr_country_flag = llmb_posture_defensive_SAU clr_country_flag = llmb_posture_offensive_SAU set_country_flag = llmb_posture_offensive_SAU log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive SAU" }
+	if = { limit = { has_country_flag = llmb_target_EGY } clr_country_flag = llmb_posture_defensive_EGY clr_country_flag = llmb_posture_offensive_EGY set_country_flag = llmb_posture_offensive_EGY log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive EGY" }
+	if = { limit = { has_country_flag = llmb_target_ETH } clr_country_flag = llmb_posture_defensive_ETH clr_country_flag = llmb_posture_offensive_ETH set_country_flag = llmb_posture_offensive_ETH log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=offensive ETH" }
+}
+
+llm_bridge_raise_theater_balanced = {
+	if = { limit = { has_country_flag = llmb_target_GER } clr_country_flag = llmb_posture_defensive_GER clr_country_flag = llmb_posture_offensive_GER log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced GER" }
+	if = { limit = { has_country_flag = llmb_target_ENG } clr_country_flag = llmb_posture_defensive_ENG clr_country_flag = llmb_posture_offensive_ENG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced ENG" }
+	if = { limit = { has_country_flag = llmb_target_FRA } clr_country_flag = llmb_posture_defensive_FRA clr_country_flag = llmb_posture_offensive_FRA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced FRA" }
+	if = { limit = { has_country_flag = llmb_target_ITA } clr_country_flag = llmb_posture_defensive_ITA clr_country_flag = llmb_posture_offensive_ITA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced ITA" }
+	if = { limit = { has_country_flag = llmb_target_SOV } clr_country_flag = llmb_posture_defensive_SOV clr_country_flag = llmb_posture_offensive_SOV log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced SOV" }
+	if = { limit = { has_country_flag = llmb_target_USA } clr_country_flag = llmb_posture_defensive_USA clr_country_flag = llmb_posture_offensive_USA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced USA" }
+	if = { limit = { has_country_flag = llmb_target_JAP } clr_country_flag = llmb_posture_defensive_JAP clr_country_flag = llmb_posture_offensive_JAP log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced JAP" }
+	if = { limit = { has_country_flag = llmb_target_CHI } clr_country_flag = llmb_posture_defensive_CHI clr_country_flag = llmb_posture_offensive_CHI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced CHI" }
+	if = { limit = { has_country_flag = llmb_target_PRC } clr_country_flag = llmb_posture_defensive_PRC clr_country_flag = llmb_posture_offensive_PRC log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced PRC" }
+	if = { limit = { has_country_flag = llmb_target_MAN } clr_country_flag = llmb_posture_defensive_MAN clr_country_flag = llmb_posture_offensive_MAN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced MAN" }
+	if = { limit = { has_country_flag = llmb_target_POL } clr_country_flag = llmb_posture_defensive_POL clr_country_flag = llmb_posture_offensive_POL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced POL" }
+	if = { limit = { has_country_flag = llmb_target_CZE } clr_country_flag = llmb_posture_defensive_CZE clr_country_flag = llmb_posture_offensive_CZE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced CZE" }
+	if = { limit = { has_country_flag = llmb_target_AUS } clr_country_flag = llmb_posture_defensive_AUS clr_country_flag = llmb_posture_offensive_AUS log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced AUS" }
+	if = { limit = { has_country_flag = llmb_target_HUN } clr_country_flag = llmb_posture_defensive_HUN clr_country_flag = llmb_posture_offensive_HUN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced HUN" }
+	if = { limit = { has_country_flag = llmb_target_ROM } clr_country_flag = llmb_posture_defensive_ROM clr_country_flag = llmb_posture_offensive_ROM log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced ROM" }
+	if = { limit = { has_country_flag = llmb_target_YUG } clr_country_flag = llmb_posture_defensive_YUG clr_country_flag = llmb_posture_offensive_YUG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced YUG" }
+	if = { limit = { has_country_flag = llmb_target_GRE } clr_country_flag = llmb_posture_defensive_GRE clr_country_flag = llmb_posture_offensive_GRE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced GRE" }
+	if = { limit = { has_country_flag = llmb_target_BUL } clr_country_flag = llmb_posture_defensive_BUL clr_country_flag = llmb_posture_offensive_BUL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced BUL" }
+	if = { limit = { has_country_flag = llmb_target_ALB } clr_country_flag = llmb_posture_defensive_ALB clr_country_flag = llmb_posture_offensive_ALB log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced ALB" }
+	if = { limit = { has_country_flag = llmb_target_TUR } clr_country_flag = llmb_posture_defensive_TUR clr_country_flag = llmb_posture_offensive_TUR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced TUR" }
+	if = { limit = { has_country_flag = llmb_target_SPR } clr_country_flag = llmb_posture_defensive_SPR clr_country_flag = llmb_posture_offensive_SPR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced SPR" }
+	if = { limit = { has_country_flag = llmb_target_POR } clr_country_flag = llmb_posture_defensive_POR clr_country_flag = llmb_posture_offensive_POR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced POR" }
+	if = { limit = { has_country_flag = llmb_target_BEL } clr_country_flag = llmb_posture_defensive_BEL clr_country_flag = llmb_posture_offensive_BEL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced BEL" }
+	if = { limit = { has_country_flag = llmb_target_HOL } clr_country_flag = llmb_posture_defensive_HOL clr_country_flag = llmb_posture_offensive_HOL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced HOL" }
+	if = { limit = { has_country_flag = llmb_target_LUX } clr_country_flag = llmb_posture_defensive_LUX clr_country_flag = llmb_posture_offensive_LUX log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced LUX" }
+	if = { limit = { has_country_flag = llmb_target_DEN } clr_country_flag = llmb_posture_defensive_DEN clr_country_flag = llmb_posture_offensive_DEN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced DEN" }
+	if = { limit = { has_country_flag = llmb_target_NOR } clr_country_flag = llmb_posture_defensive_NOR clr_country_flag = llmb_posture_offensive_NOR log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced NOR" }
+	if = { limit = { has_country_flag = llmb_target_SWE } clr_country_flag = llmb_posture_defensive_SWE clr_country_flag = llmb_posture_offensive_SWE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced SWE" }
+	if = { limit = { has_country_flag = llmb_target_FIN } clr_country_flag = llmb_posture_defensive_FIN clr_country_flag = llmb_posture_offensive_FIN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced FIN" }
+	if = { limit = { has_country_flag = llmb_target_EST } clr_country_flag = llmb_posture_defensive_EST clr_country_flag = llmb_posture_offensive_EST log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced EST" }
+	if = { limit = { has_country_flag = llmb_target_LAT } clr_country_flag = llmb_posture_defensive_LAT clr_country_flag = llmb_posture_offensive_LAT log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced LAT" }
+	if = { limit = { has_country_flag = llmb_target_LIT } clr_country_flag = llmb_posture_defensive_LIT clr_country_flag = llmb_posture_offensive_LIT log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced LIT" }
+	if = { limit = { has_country_flag = llmb_target_SWI } clr_country_flag = llmb_posture_defensive_SWI clr_country_flag = llmb_posture_offensive_SWI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced SWI" }
+	if = { limit = { has_country_flag = llmb_target_IRE } clr_country_flag = llmb_posture_defensive_IRE clr_country_flag = llmb_posture_offensive_IRE log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced IRE" }
+	if = { limit = { has_country_flag = llmb_target_CAN } clr_country_flag = llmb_posture_defensive_CAN clr_country_flag = llmb_posture_offensive_CAN log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced CAN" }
+	if = { limit = { has_country_flag = llmb_target_AST } clr_country_flag = llmb_posture_defensive_AST clr_country_flag = llmb_posture_offensive_AST log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced AST" }
+	if = { limit = { has_country_flag = llmb_target_NZL } clr_country_flag = llmb_posture_defensive_NZL clr_country_flag = llmb_posture_offensive_NZL log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced NZL" }
+	if = { limit = { has_country_flag = llmb_target_SAF } clr_country_flag = llmb_posture_defensive_SAF clr_country_flag = llmb_posture_offensive_SAF log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced SAF" }
+	if = { limit = { has_country_flag = llmb_target_RAJ } clr_country_flag = llmb_posture_defensive_RAJ clr_country_flag = llmb_posture_offensive_RAJ log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced RAJ" }
+	if = { limit = { has_country_flag = llmb_target_SIA } clr_country_flag = llmb_posture_defensive_SIA clr_country_flag = llmb_posture_offensive_SIA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced SIA" }
+	if = { limit = { has_country_flag = llmb_target_PHI } clr_country_flag = llmb_posture_defensive_PHI clr_country_flag = llmb_posture_offensive_PHI log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced PHI" }
+	if = { limit = { has_country_flag = llmb_target_MEX } clr_country_flag = llmb_posture_defensive_MEX clr_country_flag = llmb_posture_offensive_MEX log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced MEX" }
+	if = { limit = { has_country_flag = llmb_target_BRA } clr_country_flag = llmb_posture_defensive_BRA clr_country_flag = llmb_posture_offensive_BRA log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced BRA" }
+	if = { limit = { has_country_flag = llmb_target_ARG } clr_country_flag = llmb_posture_defensive_ARG clr_country_flag = llmb_posture_offensive_ARG log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced ARG" }
+	if = { limit = { has_country_flag = llmb_target_PER } clr_country_flag = llmb_posture_defensive_PER clr_country_flag = llmb_posture_offensive_PER log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced PER" }
+	if = { limit = { has_country_flag = llmb_target_IRQ } clr_country_flag = llmb_posture_defensive_IRQ clr_country_flag = llmb_posture_offensive_IRQ log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced IRQ" }
+	if = { limit = { has_country_flag = llmb_target_SAU } clr_country_flag = llmb_posture_defensive_SAU clr_country_flag = llmb_posture_offensive_SAU log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced SAU" }
+	if = { limit = { has_country_flag = llmb_target_EGY } clr_country_flag = llmb_posture_defensive_EGY clr_country_flag = llmb_posture_offensive_EGY log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced EGY" }
+	if = { limit = { has_country_flag = llmb_target_ETH } clr_country_flag = llmb_posture_defensive_ETH clr_country_flag = llmb_posture_offensive_ETH log = "LLMB|v1|evt|tag=[ROOT.GetTag]|kind=15|detail=balanced ETH" }
+}
+
 llm_bridge_clear_target_directives = {
 	clr_country_flag = llmb_invade_GER
 	clr_country_flag = llmb_invade_ENG
@@ -1003,5 +1260,6 @@ llm_bridge_clear_target_directives = {
 	clr_country_flag = llmb_ignore_SAU
 	clr_country_flag = llmb_ignore_EGY
 	clr_country_flag = llmb_ignore_ETH
+	llm_bridge_clear_theater_postures = yes
 	llm_bridge_clear_target = yes
 }

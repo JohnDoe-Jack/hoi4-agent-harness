@@ -48,12 +48,13 @@ def test_raising_a_directive_sets_the_flag_for_the_selected_target_only():
 def test_decisions_are_targets_plus_directives_not_their_product():
     decisions = _files()["common/decisions/llm_bridge_target_decisions.txt"]
     names = re.findall(r"^\t(llmb_\w+) = \{", decisions, flags=re.M)
-    assert len(names) == 2 + len(AI_DIRECTIVES)
+    assert len(names) == 2 + len(AI_DIRECTIVES) + len(modgen.THEATER_POSTURE_CHOICES)
 
 
 def test_the_emitted_event_codes_are_ones_the_harness_reads():
     assert EVENT_CODES[str(modgen.EVENT_TARGET_SELECTED)][0] == "directive_target_selected"
     assert EVENT_CODES[str(modgen.EVENT_DIRECTIVE_RAISED)][0] == "directive_raised"
+    assert EVENT_CODES[str(modgen.EVENT_THEATER_POSTURE)][0] == "theater_posture"
 
 
 def test_generation_is_deterministic_and_deduplicates_tags():
