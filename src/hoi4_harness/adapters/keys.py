@@ -37,6 +37,9 @@ SCAN_CODES: dict[str, int] = {
     "ctrl": 0x1D, "shift": 0x2A, "alt": 0x38, "space": 0x39, "escape": 0x01,
     "'": 0x28, ",": 0x33, ".": 0x34,
     "kp_plus": 0x4E, "kp_minus": 0x4A,
+    # The key left of 1: the console key on every layout, wherever its legend
+    # sits (` on US, ^ on German, ; on Swedish). A scan code is a position.
+    "grave": 0x29,
 }
 ALIASES = {
     "return": "enter", "esc": "escape", "control": "ctrl", "add": "kp_plus",
@@ -55,6 +58,15 @@ class UnsupportedPlatform(RuntimeError):
 def scan_code(key: str) -> int:
     name = " " if key == " " else key.strip().lower()
     name = ALIASES.get(name, name)
+    if name.startswith("0x"):
+        # A raw scan code, for a key this table does not name (a rebound console key).
+        try:
+            code = int(name, 16)
+        except ValueError:
+            raise ValueError(f"no scan code for key {key!r}") from None
+        if not 0 < code < 0x80:
+            raise ValueError(f"scan code {key!r} is outside 0x01-0x7F")
+        return code
     if name not in SCAN_CODES:
         raise ValueError(f"no scan code for key {key!r}")
     return SCAN_CODES[name]
