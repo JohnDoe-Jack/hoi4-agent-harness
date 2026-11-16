@@ -133,7 +133,74 @@ reads them — expected at this stage; the result is still the evidence that the
 click path works, so note what you saw happen in-game. Paste a transcript
 excerpt into #3; delegation's result into #8.
 
-## 7. With API keys (#22, #23)
+## 7. The console channel (#83)
+
+Do this in a non-ironman game, with the mod loaded and telemetry flowing (step 3),
+country known. The point is to settle the UNVERIFIED list in
+[adapters.md](adapters.md#console-channel----effects-through-run-instead-of-the-ui-83).
+One check at a time, unpaused for a day between them.
+
+1. **Folder and syntax, with something harmless.** Put a file `probe.txt` in the
+   game's user directory (the folder with `logs/` and `mod/`) holding one line,
+   your tag in place of `SWE`:
+   `eval_effect SWE = { add_political_power = 1 }`. In the game press the key
+   left of `1`, type `run probe.txt`, `enter`. Political power rises by 1 (top
+   bar) and `game.log` shows no error: the folder and the inline syntax are both
+   right. Nothing happens, or the console says it cannot open the file: try the
+   install folder, then a `script/` folder inside the user directory, and set
+   `HOI4_CONSOLE_DIR` to the one that works. The file opens but the command
+   errors: `game.log` names it; report that line. Press the console key again to
+   close it, and note whether it did, and whether the console kept the text.
+2. **With and without `-debug`.** Repeat 1 with the game started normally and
+   with `-debug`; say which worked.
+3. **Dry run, then live, for the harness.** One action at a time from a Python
+   prompt (the input driver refuses when the game is not the focused window, so
+   the script waits for you to click it):
+
+   ```python
+   import time
+   from hoi4_harness.adapters import build_adapter
+   from hoi4_harness.config import HarnessConfig
+   from hoi4_harness.types import ActionCall
+
+   cfg = HarnessConfig.from_env()      # HOI4_GAME_DIR, HOI4_LOG_PATH, HOI4_CONSOLE_DIR set
+   cfg.adapter, cfg.dry_run = "logtail+input", True       # False for the live run
+   game = build_adapter(cfg)
+   print(game.read_state().country)
+   call = ActionCall("hire_advisor", {"advisor_id": "SWE_some_advisor"})
+   time.sleep(5)                       # click the game window now (live run only)
+   print(game.apply(call))
+   ```
+
+   The dry run writes `runs/console/*-llmb_turn.txt` and returns `not_executed`
+   with the keys it would send (`press grave`, `type run llmb_turn.txt`, `press
+   enter`, `press grave`); read the file. A live run returns `changed.channel =
+   console`, plus `unverified` until a fresh day of telemetry has passed: unpause
+   a day and the next brief shows the change.
+4. **Construction.** Queue one civilian factory in a state you own that has a
+   free slot. In the construction panel it shows in the queue, using civilian
+   factories; `game.log` shows the telemetry. Answers: does it use the queue, and
+   does `level = 1` make one item. Then try a state you do not own: nothing
+   should queue (the effect's limit), and the result should say the game did not
+   change.
+5. **Production.** Add a line for `infantry_equipment_1` with 1-2 factories. It
+   appears in the production panel; note whether it is unlimited like one made
+   by hand.
+6. **Advisor.** Hire a cheap one. Political power falls by exactly the base cost,
+   and the advisor is in the slot. Try one you cannot afford: the harness refuses
+   before any key.
+7. **Directives.** `ActionCall("set_ai_directive", {"directive": "protect", "target":
+   "POL"})`, then `set_ai_posture` with `{"posture": "offensive", "theater": "GER"}`, then
+   `clear_ai_directives`. `game.log` shows the mod's
+   `LLMB|v2|evt` lines (kinds 13, 14, 15, 12) as with the decisions, and the
+   brief's AI control line follows.
+8. **Ironman.** Optionally try the console in an ironman game and say whether it
+   is refused and whether the save is marked.
+
+Paste the results into #83: the folder, whether `-debug` was needed, and the queue
+and production answers. They go in the UNVERIFIED list in adapters.md as settled.
+
+## 8. With API keys (#22, #23)
 
 ```bash
 HOI4_LIVE_TESTS=1 ANTHROPIC_API_KEY=... pytest tests/live -v -rs
@@ -146,7 +213,7 @@ hoi4-harness play --provider anthropic --turns 20 --run-dir runs/priced
 Paste the conformance output into #22. Compare the run's `spend.usd` with the
 provider's usage page for the same window and paste both numbers into #23.
 
-## 8. The measurements (#10, #14)
+## 9. The measurements (#10, #14)
 
 With a real model configured and `tiktoken` installed:
 
