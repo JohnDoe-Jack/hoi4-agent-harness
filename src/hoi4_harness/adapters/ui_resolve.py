@@ -15,7 +15,7 @@ Derived values a script may use as ``{placeholders}``:
   defaults to 1.
 * ``start_research``: ``{tech_folder}`` and the computed click target
   ``research.tech_point``. The tech tree has no search box, so a technology is
-  clicked where ``common/technologies`` says it is drawn. See ``tech_point``.
+  clicked where the sub-tree layout says it is drawn. See ``tech_point``.
 """
 
 from __future__ import annotations
@@ -24,11 +24,14 @@ import re
 from dataclasses import dataclass, field
 
 from ..identifiers import IdentifierIndex, TechPlace
+from ..techtree import CONTENT_ORIGIN, REFERENCE_HEIGHT, Gridbox, gui_point
 
 #: Click targets computed per call rather than recorded, and the recorded targets
 #: each is computed from. ``hoi4-harness calibrate`` asks for the latter.
 COMPUTED_TARGETS: dict[str, tuple[str, ...]] = {
-    "research.tech_point": ("research.grid.origin", "research.grid.col1", "research.grid.row1"),
+    # Needs no calibration: the layout comes from the game's files, anchored at a
+    # measured 1080p origin (``research.tree.origin`` is an optional override).
+    "research.tech_point": (),
 }
 #: Placeholders the resolver fills, beyond the action's own arguments.
 DERIVED_PARAMETERS: dict[str, frozenset[str]] = {
@@ -114,41 +117,53 @@ def tech_point(
     coordinates: dict[str, tuple[int, int]],
     screen: tuple[int, int] | None,
     tech: str = "",
+    gridboxes: dict[tuple[str, str], Gridbox] | None = None,
 ) -> tuple[int, int]:
-    """Where to click a technology: its grid cell, from three calibrated points.
+    """Where to click a technology, from the interface file's layout (techtree.py).
 
-    The tree is a grid of equal cells, columns running across (the year columns:
-    1918, 1936, ...) and rows down. Calibrate the centre of cell (0, 0) as
-    ``research.grid.origin``, of cell (1, 0) as ``research.grid.col1`` and of cell
-    (0, 1) as ``research.grid.row1`` (empty cells are fine: aim, do not click).
-    A folder whose cell (0, 0) sits elsewhere takes its own
-    ``research.origin.<folder>``, and a technology that does not sit where the
-    grid says takes an exact ``research.tech.<id>``. A point off the screen or
-    on the tab strip is refused: this driver does not scroll the tree.
+    The tech's position is relative to its sub-tree; the sub-tree's box in
+    ``countrytechtreeview.gui`` (``gridboxes``) puts it in the tab, in GUI units, and
+    the screen scales those by ``height / 864`` (1.25 at 1080p, UI scale 1.0). The
+    tab's content starts at a fixed spot, measured at 1080p; ``research.tree.origin``
+    (the screen point where the content's GUI (0, 0) lands) replaces that guess if
+    a layout or UI scale differs. An exact ``research.tech.<id>`` beats the rule. A
+    point off the screen or on the tab strip is refused: this driver does not
+    scroll the tree. So is a technology whose sub-tree the rule cannot place.
     """
     exact = coordinates.get(f"research.tech.{tech}") if tech else None
     if exact is not None:
         return exact
-    base = coordinates.get("research.grid.origin")
-    col1, row1 = coordinates.get("research.grid.col1"), coordinates.get("research.grid.row1")
-    if base is None or col1 is None or row1 is None:
-        missing = [t for t in COMPUTED_TARGETS["research.tech_point"] if t not in coordinates]
+    box = next((gridboxes[(place.folder, f"{root}_tree")] for root in place.roots
+                if (place.folder, f"{root}_tree") in (gridboxes or {})), None)
+    if box is None:
         raise Unresolvable(
-            f"no calibrated coordinate for {', '.join(missing)}. Run: hoi4-harness calibrate "
-            + " ".join(missing)
+            f"{tech or 'the technology'} hangs off {', '.join(place.roots) or 'no root'} in "
+            f"{place.folder}, which has no sub-tree box in interface/countrytechtreeview.gui, "
+            "so its place on the tab is unknown; calibrate research.tech.<id> for it"
         )
-    origin = coordinates.get(f"research.origin.{place.folder}") or base
-    step_x, step_y = col1[0] - base[0], row1[1] - base[1]
-    x = origin[0] + place.column * step_x
-    y = origin[1] + place.row * step_y
+    if box.format != "LEFT":
+        raise Unresolvable(
+            f"{tech or 'the technology'} is in a {box.format} sub-tree of {place.folder}; only "
+            "LEFT layouts are understood, so its place is unknown; calibrate research.tech.<id>"
+        )
     width, height = screen if screen else (1920, 1080)
+    scale = height / REFERENCE_HEIGHT
+    gx, gy = gui_point(box, place.column, place.row)
+    origin = coordinates.get("research.tree.origin")
+    ox, oy = origin if origin else (CONTENT_ORIGIN[0] * scale, CONTENT_ORIGIN[1] * scale)
+    x, y = round(ox + gx * scale), round(oy + gy * scale)
     if not (0 <= x < width and MIN_TECH_Y <= y < height):
         raise Unresolvable(
-            f"{tech or 'the technology'} (column {place.column}, row {place.row} of "
-            f"{place.folder}) would be clicked at ({x}, {y}), off the visible tree on a "
-            f"{width}x{height} screen; this driver does not scroll the tech tree"
+            f"{tech or 'the technology'} (column {place.column}, row {place.row} of the "
+            f"{box_name(place)} sub-tree in {place.folder}) would be clicked at ({x}, {y}), "
+            f"off the visible tree on a {width}x{height} screen; this driver does not scroll "
+            "the tech tree"
         )
-    return int(x), int(y)
+    return x, y
+
+
+def box_name(place: TechPlace) -> str:
+    return place.roots[0] if place.roots else "?"
 
 
 def resolve(
@@ -190,5 +205,5 @@ def resolve(
         if place is None:
             raise Unresolvable(f"no folder position for technology {tech} in this playset")
         args["tech_folder"] = place.folder
-        computed["research.tech_point"] = tech_point(place, coordinates, screen, tech)
+        computed["research.tech_point"] = tech_point(place, coordinates, screen, tech, index.tech_gridboxes)
     return Resolved(args, computed)

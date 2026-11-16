@@ -27,7 +27,9 @@
       {"wait": 0.8},
       {"click": "research.tab.{tech_folder}"},
       {"wait": 0.5},
-      {"click": "research.tech_point"}
+      {"click": "research.tech_point"},
+      {"wait": 0.8},
+      {"press": "enter"}
     ],
     "queue_construction": [
       {"press": "construction"},

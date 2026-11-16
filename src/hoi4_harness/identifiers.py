@@ -36,6 +36,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .adapters.savegame import parse_clausewitz
+from .techtree import Gridbox, parse_gridboxes
 from .types import ActionCall, ActionResult, GameState
 
 VANILLA = "vanilla"
@@ -221,11 +222,15 @@ class TechPlace:
     """Where a technology sits in its folder: ``common/technologies`` gives
     ``position = { x y }`` where ``y`` is a year column (``@1936`` names one) and
     ``x`` the row. The tree is drawn left to right, so ``column`` runs across the
-    screen and ``row`` down it."""
+    screen and ``row`` down it. Both are relative to the technology's sub-tree, not
+    the tab: ``roots`` are the technologies at the top of the chains
+    (``path = { leads_to_tech }``) that reach this one, and the interface file places
+    each root's sub-tree (see ``techtree.py``)."""
 
     folder: str
     column: int
     row: int
+    roots: tuple[str, ...] = field(default=(), compare=False)
 
 
 @dataclass
@@ -237,6 +242,8 @@ class IdentifierIndex:
     technologies: set[str] = field(default_factory=set)
     states: dict[str, StateInfo] = field(default_factory=dict)
     tech_places: dict[str, TechPlace] = field(default_factory=dict)
+    #: ``(folder, "<root>_tree")`` -> the sub-tree's box in countrytechtreeview.gui.
+    tech_gridboxes: dict[tuple[str, str], Gridbox] = field(default_factory=dict)
     _focus_names: dict[str, str] | None = field(default=None, repr=False)
 
     # --- building -------------------------------------------------------------
@@ -251,6 +258,7 @@ class IdentifierIndex:
                     index.tags.add(match.group(1))
         for path in playset.layered("common/national_focus"):
             index._read_focus_file(_parse(path))
+        leads: dict[str, list[str]] = {}
         for path in playset.layered("common/technologies"):
             for block in _as_list(_parse(path).get("technologies")):
                 variables = {k: v for k, v in block.items() if k.startswith("@")}
@@ -260,6 +268,12 @@ class IdentifierIndex:
                         place = _tech_place(value, variables)
                         if place:
                             index.tech_places[key] = place
+                        leads[key] = [str(t) for p in _as_list(value.get("path"))
+                                      if isinstance(p, dict)
+                                      for t in _as_list(p.get("leads_to_tech")) if isinstance(t, str)]
+        _attach_roots(index.tech_places, leads)
+        for path in playset.layered("interface", "countrytechtreeview.gui"):
+            index.tech_gridboxes = parse_gridboxes(path.read_text(encoding="utf-8-sig", errors="replace"))
         names = index._state_names()
         for path in playset.layered("history/states"):
             for block in _as_list(_parse(path).get("state")):
@@ -540,6 +554,24 @@ def _tech_place(block: dict, variables: dict) -> TechPlace | None:
     if row is None or column is None:
         return None
     return TechPlace(folder=str(folder["name"]), column=column, row=row)
+
+
+def _attach_roots(places: dict[str, TechPlace], leads: dict[str, list[str]]) -> None:
+    """Fill ``roots``: per folder, the technologies nothing else in the folder leads
+    to, and for each technology the roots whose chains reach it (file order)."""
+    for place in places.values():
+        place.roots = ()
+    led_to = {t for src, targets in leads.items() if src in places
+              for t in targets if t in places and places[t].folder == places[src].folder}
+    for root in (t for t in places if t not in led_to):
+        seen, queue = {root}, [root]
+        while queue:
+            tech = queue.pop()
+            places[tech].roots += (root,)
+            for nxt in leads.get(tech, ()):
+                if nxt in places and nxt not in seen and places[nxt].folder == places[root].folder:
+                    seen.add(nxt)
+                    queue.append(nxt)
 
 
 def _focus(block) -> Focus | None:
