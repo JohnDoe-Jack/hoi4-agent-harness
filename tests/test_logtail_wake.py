@@ -23,10 +23,10 @@ from hoi4_harness.env import HOI4Env
 from hoi4_harness.types import ActionResult
 
 STATE = (
-    "[messagehandler.cpp:290]: LLMB|v1|state|date={date}|tag=SWE|pp=42|stab=63|ws=18"
+    "[messagehandler.cpp:290]: LLMB|v2|state|date={date}|tag=SWE|pp=42|stab=63|ws=18"
     "|civ=12|mil=5|doc=4|mp=214000\n"
 )
-WAR = "[messagehandler.cpp:290]: LLMB|v1|evt|tag=SWE|kind=1|detail=Germany declared war\n"
+WAR = "[messagehandler.cpp:290]: LLMB|v2|evt|tag=SWE|kind=1|detail=Germany declared war\n"
 WAR_WAKE = "critical event: Germany declared war"
 
 

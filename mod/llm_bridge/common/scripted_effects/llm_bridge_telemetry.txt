@@ -18,7 +18,7 @@
 # at runtime.
 
 llm_bridge_emit_state = {
-	set_variable = { LLMB_SCHEMA_VERSION = 1 }
+	set_variable = { LLMB_SCHEMA_VERSION = 2 }
 
 	# Economy and politics.
 	set_variable = { llmb_pp = political_power }
@@ -31,7 +31,20 @@ llm_bridge_emit_state = {
 	set_variable = { llmb_doc = num_of_naval_factories }
 	set_variable = { llmb_mp = manpower }
 
-	log = "LLMB|v[?LLMB_SCHEMA_VERSION]|state|date=[GetDateText]|tag=[THIS.GetTag]|pp=[?llmb_pp]|stab=[?llmb_stab]|ws=[?llmb_ws]|civ=[?llmb_civ]|mil=[?llmb_mil]|doc=[?llmb_doc]|mp=[?llmb_mp]"
+	# Completion signals (#2). 1.19.5 has no on_action for a finished focus,
+	# research or building (only MIO ones), so the harness derives them from
+	# how these counters move between two state lines. All are country-scope
+	# dynamic variables in documentation/dynamic_variables_documentation.md.
+	# techs: researched technologies. built_*: cumulative buildings completed.
+	# There is no usable variable for the current or completed focus (focus_progress
+	# and has_completed_focus take a focus id), so focus completion is NOT derived.
+	set_variable = { llmb_techs = num_researched_technologies }
+	set_variable = { llmb_built_civ = total_constructed_civilian_factory }
+	set_variable = { llmb_built_mil = total_constructed_military_factory }
+	set_variable = { llmb_built_dock = total_constructed_dockyard }
+	set_variable = { llmb_built_infra = total_constructed_infrastructure }
+
+	log = "LLMB|v[?LLMB_SCHEMA_VERSION]|state|date=[GetDateText]|tag=[THIS.GetTag]|pp=[?llmb_pp]|stab=[?llmb_stab]|ws=[?llmb_ws]|civ=[?llmb_civ]|mil=[?llmb_mil]|doc=[?llmb_doc]|mp=[?llmb_mp]|techs=[?llmb_techs]|built_civ=[?llmb_built_civ]|built_mil=[?llmb_built_mil]|built_dock=[?llmb_built_dock]|built_infra=[?llmb_built_infra]"
 
 	llm_bridge_emit_army = yes
 }

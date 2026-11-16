@@ -37,8 +37,8 @@ One pipe-delimited line per tick, prefixed so it can be found in a log full of
 engine chatter:
 
 ```
-LLMB|v1|state|date=1936.2.14|tag=SWE|pp=42|stab=63|ws=18|civ=12|mil=5|doc=4|mp=214000
-LLMB|v1|evt|tag=GER|other=SWE|kind=1|detail=0
+LLMB|v2|state|date=1936.2.14|tag=SWE|pp=42|stab=63|ws=18|civ=12|mil=5|doc=4|mp=214000
+LLMB|v2|evt|tag=GER|other=SWE|kind=1|detail=0
 ```
 
 Rules the parser holds to, all of them tested in
