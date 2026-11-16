@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import difflib
 import hashlib
+import os
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -76,6 +77,19 @@ class Mod:
                    replace_paths=[p.replace("\\", "/").strip("/") for p in replace])
 
 
+def _resolve_descriptor(path: Path) -> Path:
+    """A launcher ``.mod`` file (``Documents/.../mod/ugc_123.mod``) stands for
+    the folder its ``path=`` names, so an installed mod can be named the way the
+    launcher names it."""
+    if path.is_file() and path.suffix.lower() == ".mod":
+        text = path.read_text(encoding="utf-8-sig", errors="replace")
+        target = _descriptor_value(text, "path") or _descriptor_value(text, "archive")
+        if not target:
+            raise FileNotFoundError(f"{path} names no mod folder (no path= line)")
+        return Path(target)
+    return path
+
+
 def _descriptor_value(text: str, key: str) -> str | None:
     match = re.search(rf'^\s*{key}\s*=\s*"([^"]*)"', text, flags=re.M)
     return match.group(1) if match else None
@@ -98,6 +112,7 @@ class Playset:
             )
         mods = []
         for mod_dir in mod_dirs:
+            mod_dir = _resolve_descriptor(Path(mod_dir))
             if not Path(mod_dir).is_dir():
                 raise FileNotFoundError(f"mod folder {mod_dir} does not exist")
             mods.append(Mod.load(Path(mod_dir)))
@@ -122,11 +137,32 @@ class Playset:
             for replaced in replace:
                 if folder == replaced or folder.startswith(replaced + "/"):
                     files.clear()
-            base = root / folder
-            if base.is_dir():
-                for path in sorted(base.rglob(pattern)):
-                    files[path.relative_to(root).as_posix()] = path
+            for key, path in _walk(root, folder, pattern):
+                files[key] = path
         return [files[key] for key in sorted(files)]
+
+    def load_order_warnings(self) -> list[str]:
+        """The bridge listed before a mod that ``replace_path``s a folder the
+        bridge has files in: the game drops the bridge's files there, so its
+        hooks and decisions silently vanish. The bridge belongs last."""
+        warnings = []
+        for i, bridge in enumerate(self.mods):
+            if not _is_bridge(bridge):
+                continue
+            used = {p.relative_to(bridge.path).parent.as_posix()
+                    for p in bridge.path.rglob("*.txt")}
+            for later in self.mods[i + 1:]:
+                if _is_bridge(later):
+                    continue
+                hit = sorted(r for r in later.replace_paths
+                             if any(u == r or u.startswith(r + "/") for u in used))
+                if hit:
+                    warnings.append(
+                        f"{bridge.name} loads before {later.name}, which replaces "
+                        f"{', '.join(hit)}: the bridge's files there are dropped. "
+                        "Put LLM Bridge last in the load order."
+                    )
+        return warnings
 
     def describe(self) -> dict:
         return {
@@ -134,6 +170,19 @@ class Playset:
             "game_dir": str(self.game_dir),
             "mods": [{"name": m.name, "version": m.version, "path": str(m.path)} for m in self.mods],
         }
+
+
+def _walk(root: Path, folder: str, pattern: str) -> Iterable[tuple[str, Path]]:
+    """(relative posix path, absolute path) for every file under root/folder
+    matching ``pattern``. os.walk and string joins: pathlib's rglob and
+    relative_to cost seconds on a total conversion's thousands of files."""
+    base = os.path.join(root, folder)
+    suffix = pattern.lstrip("*")  # only "*.txt" / "*.yml" are used
+    for current, _dirs, names in os.walk(base):
+        rel = os.path.relpath(current, root).replace("\\", "/")
+        for name in names:
+            if name.endswith(suffix):
+                yield f"{rel}/{name}", Path(current) / name
 
 
 def _is_bridge(mod: Mod) -> bool:
@@ -393,6 +442,8 @@ def _strip_comment(line: str) -> str:
     class``) must not decide whether the '#' was in a string, or the tokenizer
     reads from that quote across lines to the next one.
     """
+    if "#" not in line:  # nearly every line: skip the character scan
+        return line
     quoted = False
     for i, char in enumerate(line):
         if char == '"':

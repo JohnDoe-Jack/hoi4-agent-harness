@@ -41,6 +41,7 @@ from .calibration import DEFAULT_FILENAME, DEFAULT_TARGETS
 from .config import HarnessConfig
 from .confirm import TerminalConfirmer
 from .env import HOI4Env
+from .eval.runner import PlaysetMismatch
 from .guidance import available as guidance_packs
 from .replay import ReplayError, list_turns, replay_turn
 
@@ -446,6 +447,8 @@ def cmd_index(args: argparse.Namespace) -> int:
     print(f"playset          {summary['playset']}  [{summary['fingerprint']}]")
     for mod in index.playset.mods:
         print(f"  mod            {mod.name} {mod.version}".rstrip() + f"  ({mod.path})")
+    for warning in index.playset.load_order_warnings():
+        print(f"  WARNING        {warning}")
     print(f"countries        {summary['tags']}: {' '.join(sorted(index.tags)[:40])}"
           + (" ..." if summary["tags"] > 40 else ""))
     print(f"focus trees      {summary['focus_trees']} ({summary['focuses']} focuses)")
@@ -813,7 +816,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    return args.func(args)
+    try:
+        return args.func(args)
+    except PlaysetMismatch as exc:
+        # A scenario run against the wrong playset is a usage error, not a crash.
+        print(f"{args.command}: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":
