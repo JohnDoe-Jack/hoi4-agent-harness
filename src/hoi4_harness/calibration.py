@@ -32,7 +32,7 @@ DEFAULT_FILENAME = "calibration.json"
 # templated the values are written out (every building, every tech folder).
 # Not listed, because they depend on the action: politics.slot.<slot> and
 # politics.candidate.<advisor_id> (hire_advisor), production.line.<equipment>, and
-# optionally research.tech.<id> / research.origin.<folder> to correct the tech grid.
+# optionally research.tree.origin / research.tech.<id> to correct the tech tree.
 DEFAULT_TARGETS = (
     "research.free_slot",
     "research.tab.infantry_folder",
@@ -45,9 +45,6 @@ DEFAULT_TARGETS = (
     "research.tab.naval_folder",
     "research.tab.industry_folder",
     "research.tab.electronics_folder",
-    "research.grid.origin",
-    "research.grid.col1",
-    "research.grid.row1",
     "construction.building.civilian_factory",
     "construction.building.military_factory",
     "construction.building.dockyard",

@@ -218,7 +218,7 @@ kept apart on purpose ([`ui_scripts.py`](../src/hoi4_harness/adapters/ui_scripts
   |---|---|---|
   | `{focus_name}` | the focus id's English name (`localisation/english`), as its longest ASCII-only run of words | no name, or nothing typable (`[...]` scripted loc, `ö`) |
   | `{state_name}` | the same, for the state | the same |
-  | `{tech_folder}`, click target `research.tech_point` | the tech's `folder` and `position` in `common/technologies` | the cell is off the screen or on the tab strip (the tree is not scrolled) |
+  | `{tech_folder}`, click target `research.tech_point` | the tech's sub-tree and `position` (see start_research below) | the point is off the screen or on the tab strip (the tree is not scrolled), or the sub-tree has no `LEFT` box in the interface file |
 
   These need the game's files: pass `--game-dir`.
 
@@ -292,12 +292,26 @@ install.
 - **start_research**: `w` opens Research with three slots; clicking a free one
   (`research.free_slot`) opens the tech tree, folder tabs across the top
   (`research.tab.<folder>`) and technologies on a grid with year columns. There is
-  no search box, so the point is computed: each tech's `position = { x y }` in
-  `common/technologies` is (row, year column); the grid is three calibrated points
-  (`research.grid.origin`, `.col1`, `.row1`: the centres of cells (0,0), (1,0),
-  (0,1)). Optional corrections: `research.origin.<folder>` and an exact
-  `research.tech.<id>`. The GUI draws sub-trees of a folder at different offsets, so
-  the grid is exact only within one; check a tech from each folder you use.
+  no search box, so the point is computed. A tech's `position = { x y }` in
+  `common/technologies` is *not* a cell of the tab: it is relative to the tech's
+  sub-tree (`y` the year column, `x` the row). A sub-tree is the chain hanging off
+  one root technology (nothing in the folder leads to it) through
+  `path = { leads_to_tech }`, and `interface/countrytechtreeview.gui` places each
+  sub-tree as a `gridboxtype` named `<root>_tree` in the folder's container (so
+  `support_weapons2` and `infantry_weapons2`, both `x = 0 y = @1938`, sit in
+  different rows). In GUI units the tech's slot centre is
+  `box.position + slotsize * (cell + 1/2)` with `cell = (y, x)`, and the screen is
+  that times `height / 864` (1.25 at 1080p) from a content origin of (9, 103) GUI
+  units, i.e. (11, 129) px. Wide equipment boxes and small icons on one cell share
+  a centre. That reproduces 18 centres measured in the live infantry tab to within
+  4 px (`tests/test_tech_tree_layout.py`). Nothing needs calibrating; optional
+  overrides are `research.tree.origin` (the screen point of the content's GUI
+  (0, 0), if a UI scale or layout moves it) and an exact `research.tech.<id>`.
+  Not placed, and refused rather than guessed: sub-trees whose box is not
+  `format = "LEFT"` (the armour, air, industry and electronics tabs are turned
+  `UP`/`UPPER_LEFT`), boxes placed by percentages, techs with no `<root>_tree`
+  box (mods), and only the infantry tab has been measured live. Then a tech is
+  picked with `enter` on its detail window (the Research button's shortcut).
 - **hire_advisor**: `q` opens Political; advisor slots and candidates are icons
   (`politics.slot.<slot>`, `politics.candidate.<advisor_id>`), calibrated per name.
 - **set_production**: a draft; `y` and a guess at the click path. Not walked in

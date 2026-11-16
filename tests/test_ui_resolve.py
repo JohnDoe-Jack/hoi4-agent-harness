@@ -4,6 +4,7 @@ points, and the shipped profile -- all checked without a keyboard, a mouse or a 
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -22,6 +23,7 @@ from hoi4_harness.calibration import DEFAULT_TARGETS
 from hoi4_harness.identifiers import IdentifierIndex, Playset, TechPlace
 from hoi4_harness.types import ActionCall, ConstructionItem, GameState, ResearchSlot
 
+TECHTREE = Path(__file__).resolve().parent / "fixtures" / "techtree"
 PROFILE = Path(__file__).resolve().parents[1] / "profiles" / "ui_scripts.1.19.json"
 
 ALT, Q, CTRL, F, SHIFT, ENTER = 0x38, 0x10, 0x1D, 0x21, 0x2A, 0x1C
@@ -61,14 +63,8 @@ def game(tmp_path) -> Path:
         'focus = { id = SWE_defense_act x = 1 y = 1 }\n'
         'focus = { id = SWE_scripted x = 2 y = 1 }\n'
         'focus = { id = SWE_nameless x = 3 y = 1 } }\n', encoding="utf-8")
-    (root / "common/technologies").mkdir(parents=True)
-    (root / "common/technologies/infantry.txt").write_text(
-        "technologies = {\n @1936 = 2\n @1942 = 12\n"
-        " infantry_weapons1 = { folder = { name = infantry_folder position = { x = 0 y = @1936 } } }\n"
-        " infantry_at = { folder = { name = infantry_folder position = { x = 2 y = @1942 } } }\n"
-        " far_tech = { folder = { name = infantry_folder position = { x = 9 y = 40 } } }\n"
-        " armour1 = { folder = { name = armour_folder position = { x = 1 y = 3 } } }\n"
-        "}\n", encoding="utf-8")
+    shutil.copytree(TECHTREE / "common/technologies", root / "common/technologies")
+    shutil.copytree(TECHTREE / "interface", root / "interface")
     (root / "localisation/english").mkdir(parents=True)
     (root / "localisation/english/swe_l_english.yml").write_text(
         'l_english:\n SWE_defense_act: "Defense Act"\n'
@@ -118,30 +114,31 @@ def test_a_state_with_no_typable_name_is_refused(index):
 
 # --- the tech grid -----------------------------------------------------------
 
-GRID = {"research.grid.origin": (200, 300), "research.grid.col1": (270, 300),
-        "research.grid.row1": (200, 370)}
+def test_a_tech_is_clicked_where_its_subtree_puts_it(index):
+    assert tech_point(index.tech_places["infantry_weapons1"], {}, (1920, 1080), "infantry_weapons1",
+                      index.tech_gridboxes) == (405, 579)
+    assert tech_point(index.tech_places["infantry_at"], {}, (1920, 1080), "infantry_at",
+                      index.tech_gridboxes) == (1280, 754)
 
 
-def test_a_tech_is_clicked_at_its_grid_cell():
-    assert tech_point(TechPlace("infantry_folder", 2, 0), GRID, (1920, 1080)) == (340, 300)
-    assert tech_point(TechPlace("infantry_folder", 12, 2), GRID, (1920, 1080)) == (1040, 440)
-
-
-def test_a_folder_origin_and_an_exact_tech_override_the_grid():
-    coords = {**GRID, "research.origin.armour_folder": (200, 500), "research.tech.special": (9, 9)}
-    assert tech_point(TechPlace("armour_folder", 1, 1), coords, (1920, 1080)) == (270, 570)
-    assert tech_point(TechPlace("armour_folder", 1, 1), coords, (1920, 1080), "special") == (9, 9)
+def test_a_tree_origin_and_an_exact_tech_override_the_rule(index):
+    at, boxes = index.tech_places["infantry_at"], index.tech_gridboxes
+    moved = tech_point(at, {"research.tree.origin": (0, 0)}, (1920, 1080), "infantry_at", boxes)
+    assert moved == (1269, 625)     # GUI (140 + 70*12.5, 325 + 70*2.5) * 1.25 from (0, 0)
+    exact = {"research.tech.special": (9, 9)}
+    assert tech_point(at, exact, (1920, 1080), "special", boxes) == (9, 9)
 
 
 def test_a_cell_off_the_screen_is_refused_not_clicked(index):
     far = index.tech_places["far_tech"]
     with pytest.raises(Unresolvable, match="off the visible tree"):
-        tech_point(far, GRID, (1920, 1080), "far_tech")
+        tech_point(far, {}, (1920, 1080), "far_tech", index.tech_gridboxes)
 
 
-def test_an_uncalibrated_grid_is_named():
-    with pytest.raises(Unresolvable, match="research.grid.col1"):
-        tech_point(TechPlace("infantry_folder", 2, 0), {"research.grid.origin": (1, 1)}, None)
+def test_a_subtree_without_a_box_or_in_a_turned_layout_is_not_guessed(index):
+    for tech, why in (("orphan_root", "no sub-tree box"), ("armour1", "UPPER_LEFT")):
+        with pytest.raises(Unresolvable, match=why):
+            tech_point(index.tech_places[tech], {}, (1920, 1080), tech, index.tech_gridboxes)
 
 
 # --- end to end through the driver, against the shipped profile -------------
@@ -171,7 +168,7 @@ class Gui:
 
 COORDS = {
     "research.free_slot": (100, 200), "research.tab.infantry_folder": (150, 120),
-    **GRID, "construction.building.dockyard": (50, 60), "map.search.first_result": (70, 80),
+    "construction.building.dockyard": (50, 60), "map.search.first_result": (70, 80),
     "map.centre": (960, 540),
 }
 
@@ -263,7 +260,8 @@ def test_research_clicks_the_tab_then_the_computed_grid_point(index):
     result = driver.apply(ActionCall("start_research", {"technology": "infantry_at"}))
     assert result.error_kind == "not_executed"
     assert "click research.tab.infantry_folder at (150, 120)" in driver.log
-    assert "click research.tech_point at (1040, 440)" in driver.log
+    assert "click research.tech_point at (1280, 754)" in driver.log
+    assert driver.log[-1] == "press enter"
     assert driver._computed == {}
 
 
@@ -277,7 +275,7 @@ def test_research_is_verified_when_the_slot_shows_the_tech(index):
 
     driver, _, gui = build_driver(index, read)
     assert driver.apply(ActionCall("start_research", {"technology": "infantry_at"})).ok
-    assert "move 1040,440" in gui.sent
+    assert "move 1280,754" in gui.sent
 
 
 def test_research_for_a_tech_off_the_visible_tree_sends_nothing(index):
@@ -315,7 +313,7 @@ def test_check_scripts_passes_once_the_concrete_targets_are_calibrated(tmp_path,
     (tmp_path / "ui_scripts.json").write_text(PROFILE.read_text(encoding="utf-8"), encoding="utf-8")
     scripts = load_scripts(PROFILE)
     concrete = {t: (1, 1) for t in missing_targets(scripts, {})}
-    assert "research.grid.origin" in concrete and "research.tech_point" not in concrete
+    assert "research.free_slot" in concrete and "research.tech_point" not in concrete
     save_calibration(Calibration(screen=(1920, 1080), coordinates=concrete),
                      tmp_path / "calibration.json")
     capsys.readouterr()
