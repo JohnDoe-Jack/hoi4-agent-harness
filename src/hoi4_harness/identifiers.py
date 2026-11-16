@@ -233,6 +233,18 @@ class TechPlace:
     roots: tuple[str, ...] = field(default=(), compare=False)
 
 
+@dataclass(frozen=True)
+class AdvisorRole:
+    """One advisor block of a character: the slot it fills and what it costs.
+
+    ``cost`` is the base political power from the definition; None when the
+    block names none (the game then applies a default this index does not know),
+    which callers must treat as unknown rather than free."""
+
+    slot: str | None
+    cost: float | None
+
+
 @dataclass
 class IdentifierIndex:
     playset: Playset
@@ -245,6 +257,9 @@ class IdentifierIndex:
     #: ``(folder, "<root>_tree")`` -> the sub-tree's box in countrytechtreeview.gui.
     tech_gridboxes: dict[tuple[str, str], Gridbox] = field(default_factory=dict)
     _focus_names: dict[str, str] | None = field(default=None, repr=False)
+    _advisors: dict[str, list[AdvisorRole]] | None = field(default=None, repr=False)
+    _equipment: set[str] | None = field(default=None, repr=False)
+    _advisor_tokens: dict[str, str] = field(default_factory=dict, repr=False)
 
     # --- building -------------------------------------------------------------
 
@@ -349,6 +364,59 @@ class IdentifierIndex:
                         names[key] = value
             self._focus_names = names
         return self._focus_names.get(focus_id)
+
+    def advisor_roles(self, advisor_id: str) -> list[AdvisorRole] | None:
+        """The roles of the character ``advisor_id`` names (a character id or an
+        advisor's ``idea_token``), or None when no such advisor is defined.
+
+        ``activate_advisor`` takes the character id; an idea token is accepted
+        here because the brief and the UI show both. Read on first use: a total
+        conversion has hundreds of character files."""
+        if self._advisors is None:
+            roles: dict[str, list[AdvisorRole]] = {}
+            tokens: dict[str, str] = {}
+            for path in self.playset.layered("common/characters"):
+                for block in _as_list(_parse(path).get("characters")):
+                    for char_id, body in (block.items() if isinstance(block, dict) else []):
+                        found = _advisor_blocks(body)
+                        if not found:
+                            continue
+                        # A mod redefining a character replaces it, as the game does.
+                        roles[char_id] = []
+                        for advisor in found:
+                            cost = _number(_first(advisor.get("cost")))
+                            slot = _first(advisor.get("slot"))
+                            roles[char_id].append(
+                                AdvisorRole(slot if isinstance(slot, str) else None, cost))
+                            token = _first(advisor.get("idea_token"))
+                            if isinstance(token, str):
+                                tokens.setdefault(token, char_id)
+            self._advisors = roles
+            self._advisor_tokens = tokens
+        if advisor_id in self._advisors:
+            return self._advisors[advisor_id]
+        char_id = self._advisor_tokens.get(advisor_id)
+        return self._advisors.get(char_id) if char_id else None
+
+    def advisor_character(self, advisor_id: str) -> str | None:
+        """The character id ``activate_advisor`` wants for ``advisor_id``."""
+        if self.advisor_roles(advisor_id) is None:
+            return None
+        return advisor_id if advisor_id in self._advisors else self._advisor_tokens[advisor_id]
+
+    def equipment_types(self) -> set[str]:
+        """Equipment a production line can be made for: every entry of
+        ``common/units/equipment`` that is not an archetype (an archetype is a
+        family name, such as ``infantry_equipment``, not something that is built)."""
+        if self._equipment is None:
+            found: set[str] = set()
+            for path in self.playset.layered("common/units/equipment"):
+                for block in _as_list(_parse(path).get("equipments")):
+                    for key, body in (block.items() if isinstance(block, dict) else []):
+                        if isinstance(body, dict) and str(_first(body.get("is_archetype"))) != "yes":
+                            found.add(key)
+            self._equipment = found
+        return self._equipment
 
     # --- lookups --------------------------------------------------------------
 
@@ -531,6 +599,29 @@ def _all_values(block, key: str) -> list[str]:
                     found += [str(x) for x in _as_list(v) if isinstance(x, str)]
                 else:
                     found += _all_values(v, key)
+    return found
+
+
+def _number(raw) -> float | None:
+    try:
+        return float(str(raw).strip())
+    except ValueError:
+        return None
+
+
+def _advisor_blocks(body) -> list[dict]:
+    """Every ``advisor = { ... }`` block in a character, including those inside
+    the ``instance`` wrappers a character uses to vary by DLC."""
+    found: list[dict] = []
+    for item in _as_list(body):
+        if not isinstance(item, dict):
+            continue
+        for key, value in item.items():
+            if key == "advisor":
+                found += [v for v in _as_list(value) if isinstance(v, dict)]
+            elif key == "instance":
+                for inner in _as_list(value):
+                    found += _advisor_blocks(inner)
     return found
 
 

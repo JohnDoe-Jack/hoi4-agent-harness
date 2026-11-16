@@ -373,6 +373,130 @@ reports them (the mod's `LLMB|v2|focus` and `research` probe lines), else
 the queue (**unverified** through the log reader); an advisor by the political
 power it costs.
 
+## console channel -- effects through `run` instead of the UI (#83)
+
+The input driver acts as a player does and pays for it in calibration. For six
+actions the game has an effect that does the same thing, and the console can run
+it with the same few keys every time, whatever panel is open and wherever the
+camera is. `--adapter logtail+input` routes each action to a **channel**, `ui`
+or `console`, and every result records which one it used in `changed.channel`.
+
+| Action | Default | What is written |
+| --- | --- | --- |
+| `queue_construction` | console | `add_building_construction`, one level per block, in the state |
+| `set_production` | console | `add_equipment_production` with `requested_factories` |
+| `hire_advisor` | console | `activate_advisor` and `add_political_power = -cost` |
+| `set_ai_directive`, `set_ai_posture` (incl. theater), `clear_ai_directives` | console | the mod's own scripted effects (below) |
+| `set_national_focus`, `start_research` | ui | none: their only effects (`complete_national_focus`, `set_technology`) skip the time and cost, which is a different game |
+| `delegate_army_to_ai` | ui | the mod has no delegation effect |
+
+Change a channel with `action_channels` in a profile (`{"queue_construction":
+"ui"}`); putting an action on the console that has no faithful effect is an
+error, not a silent fallback. A console action whose preconditions fail is
+refused, and does not fall back to the UI.
+
+### What gets sent
+
+`run` reads a file of *console commands* (`console_commands_documentation.md`:
+"Runs the specified file with list of commands"), one per line, so the file is
+not a bare effects block. Two commands carry the work:
+
+* `eval_effect <effect>`, "Runs the inlined effect on a selected scope", for
+  construction, production and advisors. Each line names its own scope
+  (`eval_effect SWE = { ... }`) rather than relying on the selected one.
+* `effect <tag> <scripted_effect_name>`, "Runs a scripted effect on selected
+  scope", for the hybrid actions: `llm_bridge_select_<TAG>` then
+  `llm_bridge_raise_<directive>` (or `llm_bridge_raise_theater_<posture>`),
+  `llm_bridge_set_posture_<defensive|offensive>`, `llm_bridge_clear_directives`.
+  These are what the mod's decisions call, so the mod logs its usual telemetry
+  events and verification is the one the UI path uses. `console_hybrid_via =
+  "decision"` writes `activate_decision = <the decision>` instead.
+
+Example file for a construction, a production line and an advisor:
+
+```
+eval_effect SWE = { 1 = { if = { limit = { is_owned_by = SWE free_building_slots = { building = arms_factory size > 0 } } add_building_construction = { type = arms_factory level = 1 instant_build = no } } } }
+eval_effect SWE = { add_equipment_production = { equipment = { type = infantry_equipment_1 } requested_factories = 3 } }
+eval_effect SWE = { if = { limit = { has_political_power > 24.99 } activate_advisor = SWE_cheap_one add_political_power = -25 } }
+```
+
+The keys, always: `grave` (scan code 0x29, the key left of `1`, the console on
+every layout), type `run <filename>`, `enter`, `grave`. They go through the same
+scan-code layer, focus guard and dry-run switch as every other input. A dry run
+writes the file under `<run_dir>/console/` and logs the keys without sending;
+a live run writes the file where `run` reads it and keeps a copy there too.
+Several actions in one `apply_batch` share one file and one `run`.
+
+Settings (profile key / environment): `console_dir` / `HOI4_CONSOLE_DIR` (where
+`run` reads; default the game's user directory), `console_filename` /
+`HOI4_CONSOLE_FILE` (default `llmb_turn.txt`), `console_key` / `HOI4_CONSOLE_KEY`
+(a key name or a raw scan code such as `0x29`), `console_effect_command` /
+`HOI4_CONSOLE_EFFECT_COMMAND` (default `eval_effect`), `console_hybrid_via`,
+`console_guards`.
+
+### Preconditions: checked before anything is written
+
+Effects skip the game's own checks, so the channel makes them first. A refused
+action writes no file and sends no input; the result says which check failed.
+
+| Check | Source | If it cannot be answered |
+| --- | --- | --- |
+| the player's country is known and exists | telemetry / `country` | refuse |
+| state exists (a name, key or id; `capital` is `capital_scope`) | identifier index | refuse |
+| equipment exists and is buildable (archetypes are not) | `common/units/equipment` | refuse |
+| no line for that equipment yet; `factories >= 1`; factories <= free military factories | reader (`production`, `military_factories`) | refuse |
+| advisor exists, one unambiguous base cost (pass `slot` if it has several) | `common/characters` | refuse |
+| political power >= that cost | reader (`political_power`) | refuse |
+| directive/theater target is a real tag the mod has plumbing for | index, `modgen.DEFAULT_TAGS` | refuse |
+| a province building (`fortification`), or a global `balanced` posture | no effect exists | refuse |
+
+Not observable by any reader today, so **unchecked** (listed in
+`changed.unchecked`, never guessed): state ownership, a free building slot, an
+advisor's `allowed`/`available` conditions, and cost modifiers (the base cost is
+charged). Where script can test it, the effect carries its own `limit`
+(`is_owned_by`, `free_building_slots`, `has_political_power`), so the game itself
+declines; verification then reports the change did not happen.
+`console_guards = false` drops those limits.
+
+A directive's `weight` is not carried: the mod's blocks have fixed values, as on
+the UI path. `set_production` with 0 factories (remove a line) and changing an
+existing line are refused: `add_equipment_production` only creates one.
+
+### `add_ai_strategy`: evaluated, not used
+
+The effects documentation says only "Adds strategy entry to country AI". Vanilla
+use gives the shape (`add_ai_strategy = { type = protect id = "POL" value = 150 }`),
+and it takes any tag, which the per-tag generated blocks do not. It is not used
+because it is additive and not removable by a flag (the only undo is a negative
+value), it writes no telemetry line (verification would need a hand-written
+`log`), and it would split directive state between two mechanisms that
+`clear_ai_directives` has to undo. A tag outside the generated list is refused
+with the `mod-directives --tags` command that adds it.
+
+### UNVERIFIED: settle these in a live game
+
+Nothing below has been run against the real game; each is a configuration value,
+not a code change. `docs/live-session.md` step 7 has the exact checks.
+
+1. **Which folder `run` reads.** Default: the game's user directory (the folder
+   with `logs/` and `mod/`). Alternatives: the install folder, a `script/` folder.
+   Set `console_dir` to what the check shows.
+2. **That `eval_effect` takes its effect on the same line**, and that a scope
+   name inside it (`SWE = { ... }`, `1 = { ... }`) is accepted. The docs give no
+   argument syntax. If it does not, `effect <tag> <name>` is documented but takes
+   a scripted-effect name, not inline script: only the hybrid actions would work,
+   and the others would need scripted effects added to the mod.
+3. **`-debug`.** Whether `run` and the console need the game started with `-debug`.
+4. **Ironman.** The console is expected to be off in ironman, and its use may mark
+   the save. Play non-ironman.
+5. **Whether `add_building_construction` goes through the construction queue**
+   (uses civilian factories, respects slots) or adds levels directly, and whether
+   `level = 1` blocks queue one item each, as the verification counts.
+6. **Whether `add_equipment_production` without `amount`** makes an unlimited
+   line like the UI's.
+7. **Whether an open console is closed by `grave`**, and whether the console
+   keeps text between uses (a stale line would prefix the `run`).
+
 ## composite
 
 Pairs a reader with a writer: `--adapter logtail+input`, `savegame+input` or

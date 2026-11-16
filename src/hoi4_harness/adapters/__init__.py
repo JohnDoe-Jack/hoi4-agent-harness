@@ -85,5 +85,30 @@ def build_adapter(config: HarnessConfig) -> GameAdapter:
         calibration = config.calibration_path or config.run_dir / "calibration.json"
         if Path(calibration).exists():
             writer.load_calibration(Path(calibration))
-        return CompositeAdapter(reader, writer, clock_owner=config.clock_owner)
+        return CompositeAdapter(reader, _with_console(writer, config),
+                                clock_owner=config.clock_owner)
     raise ValueError(f"Unknown adapter {name!r}. Known: {', '.join(ADAPTERS)}")
+
+
+def _with_console(driver, config: HarnessConfig):
+    """Wrap the input driver in the per-action channel router (#83)."""
+    from .channels import ChannelRouter, resolve_channels
+    from .console import ConsoleChannel, ConsoleConfig
+
+    channels = resolve_channels(config.action_channels)
+    console = ConsoleChannel(
+        driver,
+        ConsoleConfig(
+            directory=config.console_dir,
+            filename=config.console_filename,
+            open_key=config.console_key,
+            close_key=config.console_key,
+            effect_command=config.console_effect_command,
+            hybrid_via=config.console_hybrid_via,
+            guards=config.console_guards,
+            archive_dir=Path(config.run_dir),
+            country=config.country,
+        ),
+        index=config.build_index(),
+    )
+    return ChannelRouter(driver, console, channels)
