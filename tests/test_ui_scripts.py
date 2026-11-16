@@ -33,7 +33,7 @@ from hoi4_harness.types import (
 
 FOCUS_SCRIPT = parse_steps([
     {"press": "f"}, {"click": "focus.search"}, {"type": "{focus_id}"},
-    {"click": "focus.first_result"}, {"press": "escape"},
+    {"click": "focus.first_result"},
 ])
 COORDS = {"focus.search": (10, 10), "focus.first_result": (20, 20)}
 
@@ -322,7 +322,7 @@ def test_a_placeholder_the_action_never_carries_is_refused_at_load(tmp_path):
     path = tmp_path / "s.json"
     path.write_text(json.dumps({"schema": 1, "scripts": {
         "start_research": [{"type": "{tech}"}]}}))
-    with pytest.raises(ValueError, match=r"start_research uses \{tech\}, but its arguments are technology"):
+    with pytest.raises(ValueError, match=r"start_research uses \{tech\}, but its arguments are .*technology"):
         load_scripts(path)
 
 

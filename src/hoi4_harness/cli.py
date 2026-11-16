@@ -543,12 +543,12 @@ def calibration_targets(config: HarnessConfig) -> list[str]:
     target ('construction.{building}') cannot be aimed at, so it is reported
     and left for the operator to name per value."""
     from .adapters.ui_scripts import DEFAULT_FILENAME as SCRIPTS_FILENAME
-    from .adapters.ui_scripts import load_scripts, targets_in
+    from .adapters.ui_scripts import expanded_targets, load_scripts
 
     path = config.ui_scripts_path or config.run_dir / SCRIPTS_FILENAME
     if not Path(path).exists():
         return list(DEFAULT_TARGETS)
-    targets = targets_in(load_scripts(path))
+    targets = expanded_targets(load_scripts(path))
     templated = [t for t in targets if "{" in t]
     for target in templated:
         print(f"note: {target} depends on the action's arguments; calibrate each value by name",
@@ -567,7 +567,7 @@ def cmd_check_scripts(args: argparse.Namespace) -> int:
     scripts_path = config.ui_scripts_path or config.run_dir / SCRIPTS_FILENAME
     calibration_path = config.calibration_path or config.run_dir / DEFAULT_FILENAME
     if not Path(scripts_path).exists():
-        print(f"check-scripts: no {scripts_path}; copy profiles/ui_scripts.example.json there",
+        print(f"check-scripts: no {scripts_path}; copy profiles/ui_scripts.1.19.json there",
               file=sys.stderr)
         return 2
     try:

@@ -69,6 +69,7 @@ def build_adapter(config: HarnessConfig) -> GameAdapter:
         from .ui_scripts import load_scripts
 
         scripts_path = config.ui_scripts_path or config.run_dir / SCRIPTS_FILENAME
+        scripts = load_scripts(scripts_path) if Path(scripts_path).exists() else None
         writer = InputDriverAdapter(
             InputConfig(
                 window_title=config.window_title,
@@ -76,7 +77,10 @@ def build_adapter(config: HarnessConfig) -> GameAdapter:
                 clock_probe_seconds=config.clock_probe_seconds,
             ),
             dry_run=config.dry_run,
-            scripts=load_scripts(scripts_path) if Path(scripts_path).exists() else None,
+            scripts=scripts,
+            # Localised names and tech positions for the click paths; None without
+            # a --game-dir, in which case a script that needs them refuses.
+            index=config.build_index() if scripts else None,
         )
         calibration = config.calibration_path or config.run_dir / "calibration.json"
         if Path(calibration).exists():
