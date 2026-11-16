@@ -1,15 +1,15 @@
 """Read-only state from HOI4 save files.
 
-Status: skeleton. The tokenizer below is real enough to walk a Clausewitz text
-save; the mapping from parsed blocks to :class:`GameState` is deliberately left
-as a small number of clearly-marked TODOs, because it is the part that has to be
-verified against a real save rather than guessed.
+Maps the player's numbers from a text save onto :class:`GameState`; what each
+field reads from, and what is still unknown, is in docs/adapters.md. Fields the
+save does not hold stay in ``unknown_fields``.
 
 Constraints worth knowing before you build on this:
 
-* Ironman saves are binary and compressed. This adapter targets **non-ironman
-  text saves** only; that is also the only mode where an autosave cadence you
-  control is realistic.
+* Ironman saves are binary and compressed, and so are ordinary saves unless
+  settings.txt has ``save_as_binary=no``. This adapter reads **text saves** only;
+  non-ironman is also the only mode where an autosave cadence you control is
+  realistic.
 * A save is a snapshot, not a stream. Pair it with an autosave-every-N-days
   setting, or with :mod:`hoi4_harness.adapters.screen` for anything live.
 * It is read-only. Compose it with a write-capable sink (see

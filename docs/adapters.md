@@ -67,25 +67,74 @@ A path you supply explicitly is used or it fails — discovery never runs as a
 fallback, because searching on after you named a directory would mean reading a
 different campaign than the one you pointed at.
 
-## savegame — parser and targeted reading done, field mapping needs a real save
+## savegame -- text saves, mapped against a 1.19.5 save
 
-Reads the most recent `*.hoi4` autosave. `parse_clausewitz()` handles Paradox's
-`key=value` / `key={...}` text format including repeated keys.
+Reads the most recent `*.hoi4` autosave and maps the player's numbers onto
+`GameState`. `parse_clausewitz()` handles Paradox's `key=value` / `key={...}`
+text format, including repeated keys and keyless `{ ... }` blocks inside a list
+(`country_leader={ { ... } { ... } }`).
 
-A save is 68–96 MB on the machine this was checked on, so the adapter no longer
-tokenizes all of it. A text save writes its top level at column 0, so
-`top_level_spans()` finds each top-level entry without parsing, `extract()`
-parses only the entries asked for, and `country_block()` cuts out the player's
-own block. On a synthetic 53 MB save that is 0.6 s against 11.8 s for a full
-parse. When the layout does not show a key (a save on one line), it falls back
-to the full parse rather than reporting the key absent.
+**Saves are binary unless you turn that off.** The game's default is
+`save_as_binary=yes` in `settings.txt`; set it to `no` and save again. A binary
+save (it starts `HOI4bin`) is refused with that instruction. This is separate
+from ironman, which also forbids reading.
 
-What is left is the mapping from the player's block to `GameState`, which has to
-be verified against a real save rather than guessed — block names have moved
-between patches. So the adapter reads the date and the player and puts the
-player's parsed block in `state.raw["country"]`, and declares everything else
-unknown until each field is checked. To do that work from the file rather than
-from memory:
+A save is 60-100 MB, so nothing parses all of it. `read_save()` cuts out four
+blocks by **brace matching** and parses each alone: the player's country inside
+`countries`, `states`, `division_templates` and `equipments`. (Brace matching,
+not indentation: the real save writes some nested blocks at column 0, such as
+`CAN={` inside ENG's block, so "the next line at the same indent" cuts a country
+short.) On the 63 MB checked save the whole read is about 4 s, nearly all of it
+reading the file.
+
+### What the 1.19.5 save contains, and where each field comes from
+
+Checked against the live game at 23 April 1937 (Sweden, started from the 1936
+bookmark; `tests/fixtures/swe_1937_04_23.hoi4` is a trimmed copy and
+`tests/test_savegame_mapping.py` asserts each figure).
+
+| GameState field | Where | Checked against |
+| --- | --- | --- |
+| `political_power` | country `politics.political_power` | 891.41 (top bar ~886-891) |
+| `manpower` | sum of `manpower_pool.available` over states the player **owns** | 32,980 (top bar "32.98K") |
+| `civilian_factories`, `military_factories`, `dockyards` | sum of `industrial_complex`, `arms_factory`, `dockyard` `level` over owned states | 9 / 3 / 3 |
+| `stability`, `war_support` | country `variables.llmb_stab`, `llmb_ws` (percent, from the bridge mod), divided by 100 | 82.6% and 0% |
+| `national_focus` | country `focus.current` | `SWE_defense_act` |
+| `research` | country `technology.slots`: one key per busy technology, plus `empty` entries | 1 busy (`infantry_weapons2`), 2 free |
+| `production` | country `production.military_lines`; equipment name from `equipments` via `equipment_variant_index` | two lines, 1 factory each |
+| `divisions` | country `units.division`, grouped by `division_template_id` -> `division_templates` name | 12 |
+| `ideology` | `politics.ruling_party` | `democratic` |
+
+Things that are not what they look like:
+
+* **`stability` and `war_support` in the country block are base values**
+  (`stability=0.47` where the game showed 82.6%). Modifiers are applied at read
+  time and are not stored. The adapter therefore reads the mod's computed
+  variables and, **without the mod, reports both unknown** rather than the base.
+  The mod writes them on its telemetry tick, so they can lag the save by up to a
+  day.
+* `manpower={ ratio=... }` in the country block is the recruitment ratio, not the
+  pool. The pool is per state.
+* `llmb_civ` (21 in the checked save) is the game's `num_of_civilian_factories`,
+  which includes factories gained through trade, not the 9 owned. Factories are
+  counted from the states.
+* A production line's `efficiency` is the mean of the first `active_factories`
+  entries of its `factory_efficiencies` (percent), and `output_per_day` is the
+  line's `speed` over its unit `cost`. Both are derived, not stored under those
+  names; the efficiencies (53, 50) look right but only the factory counts were
+  checked against the game.
+* `days_remaining` for research and focus is not stored (only points so far), so
+  it stays unset.
+
+### Still unknown (reported in `unknown_fields`, never defaulted)
+
+`construction` (the country block holds no queue; `country_reports.construction`
+is a daily count of factories on construction, not the items), `completed_focuses`
+(not in the country block), `wars`, `fronts`, the hybrid-control fields
+(`delegated_armies`, `ai_directives`, `posture`, `theater_postures`), and now
+`fuel` and `convoys`, which the brief used to print as `0`. Division `location`
+and `strength` are not read either: the save gives a province id and raw
+strength figures, not the units `DivisionGroup` documents.
 
 ```bash
 hoi4-harness save-inspect                   # newest save in HOI4_SAVE_DIR
@@ -93,11 +142,12 @@ hoi4-harness save-inspect path/to/save.hoi4
 ```
 
 prints the top-level entries by size and the player country's keys with a sample
-of each value — the input for writing `_to_state`, one verified field at a time.
+of each value. Its size table splits on any key at column 0, so on a real save it
+lists thousands of numeric entries: those are artefacts of the heuristic, not
+blocks.
 
-Constraints: non-ironman text saves only (ironman is binary and compressed); a
-save is a snapshot, so pair it with a short autosave interval; read-only, so
-compose it with a writer.
+Constraints: text saves only; a save is a snapshot, so pair it with a short
+autosave interval; read-only, so compose it with a writer.
 
 ## screen — capture done, vision TODO
 

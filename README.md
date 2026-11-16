@@ -161,7 +161,7 @@ verification checklist: [docs/mod-bridge.md](docs/mod-bridge.md).
 ```
 
 - **[adapters/](src/hoi4_harness/adapters/)** — the bridge to a running game. `mock` (complete),
-  `logtail` (complete, needs the mod), `savegame` (parser done, mapping stubbed),
+  `logtail` (complete, needs the mod), `savegame` (text saves: the player's numbers, research, production, divisions),
   `screen` (capture done, vision call stubbed), `input_driver` (write side, stubbed),
   `composite` (pair a reader with a writer).
 - **[actions/](src/hoi4_harness/actions/)** — the catalog, a dependency-free schema validator, and
@@ -191,7 +191,7 @@ verification checklist: [docs/mod-bridge.md](docs/mod-bridge.md).
 | Guidance packs + profiles | Working, tested (6 packs, 3 example profiles) |
 | Anthropic / OpenAI-compatible providers | Written, not yet run against a live key; conformance suite in `tests/live/` |
 | Gemini provider | Written; the SDK surface moves — check this first if it fails |
-| Save-file adapter | Parser and targeted block reading work; field mapping needs a real save (`save-inspect` shows what to map) |
+| Save-file adapter | Reads political power, manpower, factories, focus, research, production and divisions from a text save (not construction, wars or fronts); stability and war support need the mod. Checked against a 1.19.5 save |
 | Screen adapter | Capture works; vision→state is TODO |
 | Input driver | Hotkeys, clicks and typing work; verified UI scripts for the five peacetime actions, click paths recorded per install (unrecorded in-game) |
 
