@@ -70,7 +70,9 @@ def render_full(state: GameState, max_events: int = 6, max_fronts: int = 3) -> s
         lines.append(f"Resources: {detail}")
 
     if state.national_focus:
-        lines.append(f"Focus: {state.national_focus} ({state.focus_days_remaining}d left)")
+        left = state.focus_days_remaining
+        # The log reader sees which focus runs, not how long is left.
+        lines.append(f"Focus: {state.national_focus}" + (f" ({left}d left)" if left is not None else ""))
     elif state.known("national_focus"):
         lines.append("Focus: NONE SELECTED")
     else:
@@ -81,7 +83,10 @@ def render_full(state: GameState, max_events: int = 6, max_fronts: int = 3) -> s
     busy = [s for s in state.research if s.technology]
     free = len(state.research) - len(busy)
     if state.known("research"):
-        detail = "; ".join(f"{s.technology} ({s.days_remaining}d)" for s in busy) or "idle"
+        detail = "; ".join(
+            s.technology + (f" ({s.days_remaining}d)" if s.days_remaining is not None else "")
+            for s in busy
+        ) or "idle"
         lines.append(f"Research: {detail}" + (f" | {free} SLOT(S) FREE" if free else ""))
 
     if state.production:

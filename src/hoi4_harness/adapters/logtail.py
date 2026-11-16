@@ -135,6 +135,8 @@ def _event_text(event_kind: str, detail: str) -> str:
         return f"target selected: {detail}"
     if event_kind == "directive_raised":
         return f"directive raised: {detail}"
+    if event_kind == "theater_posture":
+        return f"theater posture: {detail}"
     return detail
 
 
@@ -364,13 +366,10 @@ class LogTailAdapter(GameAdapter):
         done = self._ticks.get(tag)
         if done is not None:
             self._close_tick(tag, done)
+        # The brief keeps showing the last complete day until this one closes.
+        # Clearing here would report "no focus" between a state line and the
+        # probe lines behind it -- and that wakes the planner for nothing.
         self._ticks[tag] = {"date": fields.get("_engine_date"), "focus": set(), "research": set()}
-        state = self._state
-        state.national_focus = None
-        state.research = []
-        for name in ("national_focus", "research"):
-            if name in state.unknown_fields:
-                state.unknown_fields.remove(name)
 
     def _probe(self, kind: str, fields: dict[str, str]) -> None:
         tag = fields.get("tag", "").strip().upper()
@@ -383,14 +382,19 @@ class LogTailAdapter(GameAdapter):
             return        # another day's tick; lines for two days can interleave
         state = self._state
         tick[kind].add(ident)
+        # A probe line is positive evidence, so it shows at once; only absence
+        # waits for the day to close.
         if kind == "focus":
             state.national_focus = ident
         elif ident not in [slot.technology for slot in state.research]:
             state.research.append(ResearchSlot(index=len(state.research), technology=ident))
+        if ("national_focus" if kind == "focus" else "research") in state.unknown_fields:
+            state.unknown_fields.remove("national_focus" if kind == "focus" else "research")
 
     def _close_tick(self, tag: str, tick: dict) -> None:
         last = self._closed.get(tag)
         self._closed[tag] = tick
+        self._show_tick(tick)
         if last is None:
             return
         date_ = self._state.date
@@ -411,6 +415,15 @@ class LogTailAdapter(GameAdapter):
             self._pending.append(GameEvent(
                 kind="research_done", text=f"research complete: {names}",
                 severity="notable", date=date_))
+
+    def _show_tick(self, tick: dict) -> None:
+        """Make a complete day's probe lines the state: what ran that day, and nothing else."""
+        state = self._state
+        state.national_focus = min(tick["focus"]) if tick["focus"] else None
+        state.research = [ResearchSlot(index=i, technology=t) for i, t in enumerate(sorted(tick["research"]))]
+        for name in ("national_focus", "research"):
+            if name in state.unknown_fields:
+                state.unknown_fields.remove(name)
 
     def _derive_completions(self, fields: dict[str, str]) -> None:
         """Turn a rise in a completion counter into the event the game never fires.

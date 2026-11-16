@@ -50,8 +50,16 @@ def test_the_running_focus_and_research_fill_the_state(tmp_path):
 
 
 def test_a_day_with_no_focus_line_means_no_focus_is_running(tmp_path):
-    s = read(tmp_path, state(2), focus(2, "SWE_rearm"), state(3))
+    # Day 3 has no focus line, and the next state line closes it.
+    s = read(tmp_path, state(2), focus(2, "SWE_rearm"), state(3), state(4))
     assert s.national_focus is None and s.research == []
+
+
+def test_a_poll_between_a_state_line_and_its_probes_still_shows_the_running_focus(tmp_path):
+    # Seen live: the reader cleared the focus on the state line, so a poll that
+    # landed before the probe lines read "no focus" and woke the planner.
+    s = read(tmp_path, state(2), focus(2, "SWE_rearm"), state(3))
+    assert s.national_focus == "SWE_rearm"
 
 
 def test_a_focus_that_stops_answering_is_focus_complete(tmp_path):
@@ -90,7 +98,7 @@ def test_a_partly_written_tick_never_reports_a_completion(tmp_path):
 
 def test_probe_lines_of_another_day_or_country_are_not_this_ticks(tmp_path):
     s = read(tmp_path, state(2), focus(2, "SWE_rearm"), state(3),
-             focus(2, "STALE"), focus(3, "POL_x", tag="POL"))
+             focus(2, "STALE"), focus(3, "POL_x", tag="POL"), state(4))
     assert s.national_focus is None
 
 
