@@ -56,8 +56,10 @@ def render_full(state: GameState, max_events: int = 6, max_fronts: int = 3) -> s
         )
     )
     lines.append(
-        "Factories: {civ} civ / {mil} mil / {dock} dockyards | fuel {fuel} | convoys {conv}".format(
-            civ=_val(state, "civilian_factories"),
+        "Factories: {civ} / {mil} mil / {dock} dockyards | fuel {fuel} | convoys {conv}".format(
+            civ=_val(state, "civilian_factories") + " civ" + (
+                f" (+{state.trade_civilian_factories} from trade)"
+                if state.trade_civilian_factories else ""),
             mil=_val(state, "military_factories"),
             dock=_val(state, "dockyards"),
             fuel=_val(state, "fuel", lambda v: f"{v:.0f}"),

@@ -187,6 +187,9 @@ class GameState:
     war_support: float = 0.0
     manpower: int = 0
     civilian_factories: int = 0
+    #: Civilian factories on loan through trade, counted in the game's own
+    #: civilian figure but gone when the trade ends. None when unseen.
+    trade_civilian_factories: int | None = None
     military_factories: int = 0
     dockyards: int = 0
     fuel: float = 0.0

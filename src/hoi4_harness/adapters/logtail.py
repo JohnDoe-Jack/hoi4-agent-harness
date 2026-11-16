@@ -21,7 +21,7 @@ from .base import AdapterInfo, GameAdapter
 from .clock import wait_for_days
 
 #: Must match LLMB_SCHEMA_VERSION in the mod's telemetry effect.
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 PREFIX = "LLMB|"
 LINE = re.compile(r"LLMB\|v(?P<version>\d+)\|(?P<kind>\w+)\|(?P<fields>.*)$")
@@ -309,6 +309,7 @@ class LogTailAdapter(GameAdapter):
                     if attribute in state.unknown_fields:
                         state.unknown_fields.remove(attribute)
             if kind == "state":
+                self._split_trade(fields)
                 self._derive_completions(fields)
                 self._open_tick(fields)
         elif kind in {"focus", "research"}:
@@ -425,6 +426,29 @@ class LogTailAdapter(GameAdapter):
         for name in ("national_focus", "research"):
             if name in state.unknown_fields:
                 state.unknown_fields.remove(name)
+
+    def _split_trade(self, fields: dict[str, str]) -> None:
+        """Separate owned civilian factories from ones on loan through trade.
+
+        The game's civilian count includes trade (seen live: 20, of which 9
+        owned and 11 from trade). ``owned`` is ``num_of_factories``, which the
+        game documents as excluding trade and lend-lease; what it leaves after
+        military factories and dockyards is the owned civilian count. A split
+        that does not add up is not used.
+        """
+        state = self._state
+        try:
+            owned = int(fields["owned"])
+            civ, mil, doc = int(fields["civ"]), int(fields["mil"]), int(fields["doc"])
+        except (KeyError, ValueError):
+            state.trade_civilian_factories = None
+            return
+        owned_civ = owned - mil - doc
+        if 0 <= owned_civ <= civ:
+            state.civilian_factories = owned_civ
+            state.trade_civilian_factories = civ - owned_civ
+        else:
+            state.trade_civilian_factories = None
 
     def _derive_completions(self, fields: dict[str, str]) -> None:
         """Turn a rise in a completion counter into the event the game never fires.

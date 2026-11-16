@@ -37,10 +37,10 @@ One pipe-delimited line per tick, prefixed so it can be found in a log full of
 engine chatter:
 
 ```
-LLMB|v2|state|date= 12:00, 1 January, 1936|tag=SWE|pp=1.933|stab=83.248|ws=0|civ=9|mil=3|doc=3|mp=31153|techs=12|built_civ=0|built_mil=0|built_dock=0|built_infra=2
-LLMB|v2|focus|tag=SWE|id=SWE_rearm
-LLMB|v2|research|tag=SWE|id=gwtank
-LLMB|v2|evt|tag=SWE|kind=13|detail=POL
+LLMB|v3|state|date= 12:00, 1 January, 1936|tag=SWE|pp=1.933|stab=83.248|ws=0|civ=9|mil=3|doc=3|owned=15|mp=31153|techs=12|built_civ=0|built_mil=0|built_dock=0|built_infra=2
+LLMB|v3|focus|tag=SWE|id=SWE_rearm
+LLMB|v3|research|tag=SWE|id=gwtank
+LLMB|v3|evt|tag=SWE|kind=13|detail=POL
 ```
 
 Rules the parser holds to, all of them tested in
