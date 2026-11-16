@@ -218,8 +218,8 @@ def test_build_adapter_loads_scripts_from_the_run_dir(tmp_path):
     ("delegate_army_to_ai", {"army": "all", "delegate": False},
      GameState(delegated_armies=["all"]), GameState()),
     ("set_ai_posture", {"posture": "defensive"}, GameState(), GameState(posture="defensive")),
-    ("set_ai_posture", {"posture": "offensive", "theater": "east"},
-     GameState(), GameState(theater_postures={"east": "offensive"})),
+    ("set_ai_posture", {"posture": "offensive", "theater": "POL"},
+     GameState(), GameState(theater_postures={"POL": "offensive"})),
     ("set_ai_directive", {"directive": "protect", "target": "FIN"},
      GameState(), GameState(ai_directives=["protect FIN (100)"])),
     ("clear_ai_directives", {},
@@ -302,7 +302,7 @@ def test_a_theater_posture_through_the_log_reader_is_unverified(tmp_path):
         scripts={"set_ai_posture": parse_steps([{"click": "p"}])},
         read_state=LogTailAdapter(log).peek_state, sleep=lambda s: None, gui=FakeGui(),
     )
-    result = driver.apply(ActionCall("set_ai_posture", {"posture": "offensive", "theater": "east"}))
+    result = driver.apply(ActionCall("set_ai_posture", {"posture": "offensive", "theater": "POL"}))
     assert result.error_kind == "unverified" and "theater_postures" in result.message
 
 

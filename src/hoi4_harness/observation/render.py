@@ -121,12 +121,9 @@ def render_full(state: GameState, max_events: int = 6, max_fronts: int = 3) -> s
         if state.delegated_armies:
             bits.append(f"{len(state.delegated_armies)} army(s) delegated to the game AI")
         if state.posture:
-            bits.append(f"posture {state.posture}")
-        if state.theater_postures:
-            bits.append(
-                "theaters: "
-                + ", ".join(f"{name} {p}" for name, p in sorted(state.theater_postures.items()))
-            )
+            bits.append(f"posture {state.posture}" + (" (global)" if state.theater_postures else ""))
+        # One entry per theater, each a country a front faces: "GER: offensive".
+        bits.extend(f"{tag}: {p}" for tag, p in sorted(state.theater_postures.items()))
         if state.ai_directives:
             bits.append("directives: " + "; ".join(state.ai_directives[:4]))
         lines.append("AI control: " + " | ".join(bits))

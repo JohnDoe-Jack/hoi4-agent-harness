@@ -43,6 +43,8 @@ EVENT_CODES = {
     "5": ("construction_complete", "notable"),
     "13": ("directive_target_selected", "info"),
     "14": ("directive_raised", "info"),
+    # Mirrored from modgen.EVENT_THEATER_POSTURE; detail is "<posture> <TAG>".
+    "15": ("theater_posture", "info"),
 }
 
 #: Counters on the state line that only ever go up. The game has no on_action
@@ -80,7 +82,7 @@ NOT_EMITTED = [
     # Hybrid control: the mod raises flags but reports only posture changes, as
     # events. Posture becomes known the first time one arrives.
     "posture", "ai_directives", "delegated_armies",
-    # Posture events are global; nothing reports a per-theater posture.
+    # Per-theater posture is learned from theater_posture events, as posture is.
     "theater_postures",
 ]
 
@@ -316,6 +318,16 @@ class LogTailAdapter(GameAdapter):
                 state.posture = POSTURE_EVENTS.get(event_kind)
                 if "posture" in state.unknown_fields:
                     state.unknown_fields.remove("posture")
+            if event_kind == "theater_posture":
+                posture, _, tag = fields.get("detail", "").strip().partition(" ")
+                if posture and tag:
+                    state.theater_postures[tag.strip().upper()] = posture
+                    if "theater_postures" in state.unknown_fields:
+                        state.unknown_fields.remove("theater_postures")
+            if event_kind == "directives_cleared":
+                state.theater_postures = {}
+                if "theater_postures" in state.unknown_fields:
+                    state.unknown_fields.remove("theater_postures")
             if event_kind == "directives_cleared":
                 # Standing down clears every directive: from here on the list is
                 # complete, not just what has been seen.

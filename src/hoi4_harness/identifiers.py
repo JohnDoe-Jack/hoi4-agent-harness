@@ -42,6 +42,7 @@ VANILLA = "vanilla"
 #: Arguments that name a country, per action.
 TAG_ARGUMENTS = {
     "set_ai_directive": "target",
+    "set_ai_posture": "theater",
     "diplomacy": "target",
     "set_trade": "from_country",
 }

@@ -209,8 +209,9 @@ class GameState:
     ai_directives: list[str] = field(default_factory=list)
     posture: str | None = None
     #: Posture scoped to one theater, overriding ``posture`` there. A theater is
-    #: a front, by name: the cheapest definition that expresses "hold in the
-    #: east, press in the west", and one the brief already names.
+    #: the country a front faces, by tag: it is what the engine's own
+    #: ``front_unit_request`` strategy scopes on (``tag = KHM``), so the mod can
+    #: express it and the brief already names each front's enemy.
     theater_postures: dict[str, str] = field(default_factory=dict)
     events: list[GameEvent] = field(default_factory=list)
     unknown_fields: list[str] = field(default_factory=list)
