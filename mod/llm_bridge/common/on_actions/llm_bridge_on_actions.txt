@@ -11,15 +11,19 @@ on_actions = {
 			every_country = {
 				limit = { is_ai = no }
 				set_variable = { llmb_ai_delegated_armies = 0 }
-				log = "LLMB|v1|boot|tag=[ROOT.GetTag]|start=[GetDateText]"
+				log = "LLMB|v1|boot|tag=[THIS.GetTag]|start=[GetDateText]"
 				llm_bridge_emit_state = yes
 			}
 		}
 	}
 
+	# on_daily fires once per country, spread over the day's hours, with ROOT
+	# set to that country. Emit only on the player's own tick; looping
+	# every_country here logged the player's numbers once per country per day,
+	# under the ticking country's tag.
 	on_daily = {
 		effect = {
-			every_country = {
+			if = {
 				limit = { is_ai = no }
 				llm_bridge_emit_state = yes
 			}
