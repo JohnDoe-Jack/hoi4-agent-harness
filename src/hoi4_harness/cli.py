@@ -482,6 +482,8 @@ def cmd_experiment(args: argparse.Namespace) -> int:
         print(f"experiment: {exc.args[0]}", file=sys.stderr)
         return 2
     print(result.render())
+    if getattr(args, "markdown", None):
+        Path(args.markdown).write_text(result.markdown() + "\n", encoding="utf-8")
     return 0
 
 
@@ -737,6 +739,8 @@ def build_parser() -> argparse.ArgumentParser:
     experiment.add_argument("scenario")
     experiment.add_argument("--seeds", type=int, default=5, metavar="N",
                             help="seeds per arm (default 5)")
+    experiment.add_argument("--markdown", metavar="PATH",
+                            help="also write the results as a markdown table to PATH")
     experiment.set_defaults(func=cmd_experiment)
 
     measure_p = sub.add_parser(
