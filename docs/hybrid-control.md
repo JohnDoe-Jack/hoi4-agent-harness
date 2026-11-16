@@ -176,7 +176,7 @@ implementation, and the repo should say so.
 
 ### The experiment
 
-The runner exists; the result does not yet.
+The runner exists, and a first mock-world result is below.
 
 ```bash
 hoi4-harness experiment defensive_war --seeds 5 --provider anthropic --model ...
@@ -193,10 +193,27 @@ difference:
 | hybrid | `operational_control=ai`, `--guidance hybrid`; delegating is the model's call |
 
 The AI-only arm is the one that matters: if it scores close to hybrid, the model
-is decorative on that scenario. Against the mock with the scripted planner all
-three arms score 0.00 on `defensive_war` — which measures the mock's crude front
-rule and a planner that never delegates, nothing more. A result worth writing
-here needs a real game (#7, #8), a real model, and at least five seeds.
+is decorative on that scenario.
+
+**Result (mock world, 8 seeds, claude-opus-5-5, $11.82 in all;
+[full table](results/10-hybrid-experiment.md)).** On `winter_crisis` hybrid
+scored 1.00 on every seed, model-only 0.67 and AI-only 0.33; hybrid is the only
+arm that holds the centre front, and it cost about 30% less per run than
+model-only ($0.27 vs $0.38). On `defensive_war` nothing separates the arms:
+AI-only and model-only scored 0.00 on every seed and hybrid 1.00 once in eight
+(mean 0.12), which is a tie, so there the model is decorative. The honest
+reading is "hybrid helps on one of two scenarios", not "hybrid wins". Two
+cautions. First, the mock barely varies by seed (scores are identical across
+seeds nearly everywhere), so eight seeds show reproducibility, not robustness,
+and with two scenarios this is not a general claim. Second, these are mock
+results: the mock's operational AI is a simulation of a front rule, not HOI4's
+AI, and the hybrid arm also changes the guidance pack, not only who commands,
+so the experiment does not separate "the AI runs operations" from "the model
+was told to think at the strategic level". On the live game the AI-only arm
+would be HOI4's real operational AI, probably much stronger than the mock's, and
+the model-only arm would pay real latency while the front moves; both could
+shrink or erase the winter_crisis gap, which is why it needs a live run (#7, #8)
+before anyone quotes it.
 
 ## Why this is the more promising direction
 
