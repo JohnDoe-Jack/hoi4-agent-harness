@@ -96,25 +96,22 @@ def country_block(text: str, tag: str) -> dict | None:
     which is why ``hoi4-harness save-inspect`` exists: it shows what a real save
     calls it instead of this guessing harder.
     """
-    spans = top_level_spans(text).get("countries")
-    if not spans:
+    match = re.search(r"^countries[ 	]*=[ 	]*\{", text, flags=re.M)
+    if not match:
         return None
-    start, end = spans[0]
-    body = text[start:end]
+    start = match.end() - 1
+    body = text[start:matching_brace(text, start)]
     # Countries sit at the indentation of the first key inside the container.
     # Anything deeper is nested in another country (GER={ SWE={opinion=...} }),
-    # and [ \t] rather than \s keeps the match from running across a newline.
-    first = re.compile(r"^([ \t]*)[A-Za-z0-9_\-]+[ \t]*=", re.M).search(body, body.find("{") + 1)
+    # and [ 	] rather than \s keeps the match from running across a newline.
+    first = re.compile(r"^([ 	]*)[A-Za-z0-9_\-]+[ 	]*=", re.M).search(body, 1)
     if not first:
         return None
     indent = first.group(1)
-    match = re.search(rf"^{re.escape(indent)}{re.escape(tag)}[ \t]*=[ \t]*\{{", body, flags=re.M)
-    if not match:
+    found = re.search(rf"^{re.escape(indent)}{re.escape(tag)}[ 	]*=[ 	]*\{{", body, flags=re.M)
+    if not found:
         return None
-    # The country's block runs to the next key at the same indentation.
-    following = re.compile(rf"^{re.escape(indent)}[A-Za-z0-9_\-]+\s*=", re.M)
-    nxt = following.search(body, match.end())
-    chunk = body[match.start(): nxt.start() if nxt else len(body)]
+    chunk = body[found.start(): matching_brace(body, found.end() - 1)]
     return parse_clausewitz(chunk).get(tag)
 
 
@@ -123,6 +120,44 @@ def save_date(raw: str) -> str | None:
     from .logtail import parse_date
 
     return parse_date(str(raw).strip('"'))
+
+
+_BRACES = re.compile(r'[{}"]')
+
+
+def matching_brace(text: str, open_at: int) -> int:
+    """Index just past the ``}`` that closes the ``{`` at ``open_at``.
+
+    Counts braces and skips quoted strings; this is what finds a block's end,
+    because indentation cannot: a real save writes some nested blocks at column 0
+    (``CAN={`` inside ENG's country block), so "the next line at the same indent"
+    cuts a country short. Returns ``len(text)`` for a block that never closes,
+    which is how a save being written looks.
+    """
+    depth = 0
+    quoted = False
+    for match in _BRACES.finditer(text, open_at):
+        char = match.group()
+        if char == '"':
+            quoted = not quoted
+        elif quoted:
+            continue
+        elif char == "{":
+            depth += 1
+        else:
+            depth -= 1
+            if depth == 0:
+                return match.end()
+    return len(text)
+
+
+def top_block(text: str, key: str) -> dict | None:
+    """Parse the one top-level ``key={ ... }`` block, whole, or None if absent."""
+    match = re.search(rf"^{re.escape(key)}[ 	]*=[ 	]*\{{", text, flags=re.M)
+    if not match:
+        return None
+    end = matching_brace(text, match.end() - 1)
+    return parse_clausewitz(text[match.start():end]).get(key)
 
 
 def parse_clausewitz(text: str) -> dict:
@@ -143,6 +178,12 @@ def parse_clausewitz(text: str) -> dict:
                 pos += 1
                 return block
             pos += 1
+            if tok == "{":
+                # A block with no key: the members of a list of records, as in
+                # `country_leader={ { ideology=a } { ideology=b } }`. Reading the
+                # brace as a stray item used to close the enclosing block early.
+                block.setdefault("_items", []).append(parse_block())
+                continue
             if pos < len(tokens) and tokens[pos] == "=":
                 pos += 1
                 value_tok = tokens[pos]
