@@ -1,9 +1,8 @@
 """Google Gemini provider (google-genai SDK).
 
-Written against google-genai >= 0.3. The function-calling surface there has moved
-more than the other two providers', so treat this file as the one to re-check
-first if a run fails on startup: everything it touches is confined to
-``_to_contents`` and ``complete``.
+Uses google-genai >= 1.21.0 for JSON Schema function declarations and signed
+response parts. Live conformance passed with gemini-3.5-flash-lite and SDK
+3.4.0; see docs/results/22-gemini-conformance.md.
 """
 
 from __future__ import annotations
@@ -15,9 +14,13 @@ from .base import LLMClient, LLMResponse, Msg, ToolCall, Usage
 
 
 def wire_declarations(tools: list[ToolSpec] | None) -> list[dict]:
-    """Tool specs -> Gemini function declarations."""
+    """Use Gemini's JSON Schema field, preserving additionalProperties.
+
+    ``parameters`` is the smaller OpenAPI Schema dialect; the SDK converts
+    additionalProperties there into a field the Gemini API rejects.
+    """
     return [
-        {"name": t.name, "description": t.description, "parameters": t.parameters}
+        {"name": t.name, "description": t.description, "parameters_json_schema": t.parameters}
         for t in (tools or [])
     ]
 
@@ -31,11 +34,15 @@ def wire_contents(messages: list[Msg]) -> list[dict]:
     contents: list[dict] = []
     for msg in messages:
         if msg.role == "assistant":
-            parts: list[dict] = []
-            if msg.text:
-                parts.append({"text": msg.text})
-            for call in msg.tool_calls:
-                parts.append({"function_call": {"name": call.name, "args": call.arguments}})
+            # Signed parts must keep their original order and contents. They
+            # already contain the text and calls; rebuilding them loses the
+            # thought_signature required by Gemini's next tool round.
+            parts: list[dict] = [dict(part) for part in msg.provider_blocks]
+            if not parts:
+                if msg.text:
+                    parts.append({"text": msg.text})
+                for call in msg.tool_calls:
+                    parts.append({"function_call": {"name": call.name, "args": call.arguments}})
             if parts:
                 contents.append({"role": "model", "parts": parts})
         else:
@@ -119,6 +126,14 @@ class GoogleClient(LLMClient):
             ToolCall(id=f"{fc.name}-{i}", name=fc.name, arguments=dict(fc.args or {}))
             for i, fc in enumerate(getattr(response, "function_calls", None) or [])
         ]
+        candidates = getattr(response, "candidates", None) or []
+        content = getattr(candidates[0], "content", None) if candidates else None
+        # JSON mode encodes signature bytes for transcript storage; the SDK
+        # decodes them when these same parts are supplied on the next call.
+        parts = [
+            part.model_dump(mode="json", exclude_none=True)
+            for part in (getattr(content, "parts", None) or [])
+        ]
         usage = usage_from_wire(getattr(response, "usage_metadata", None))
         return LLMResponse(
             text=getattr(response, "text", "") or "",
@@ -127,4 +142,5 @@ class GoogleClient(LLMClient):
             usage=usage,
             model=self.model,
             raw=response,
+            provider_blocks=parts,
         )

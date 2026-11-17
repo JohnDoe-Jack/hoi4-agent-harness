@@ -55,7 +55,8 @@ def test_a_tool_result_round_trips_into_a_second_round(live):
     call = response.tool_calls[0]
     messages = [
         Msg(role="user", text=ASK),
-        Msg(role="assistant", text=response.text, tool_calls=response.tool_calls),
+        Msg(role="assistant", text=response.text, tool_calls=response.tool_calls,
+            provider_blocks=response.provider_blocks),
         Msg(role="user", tool_results=[
             ToolResult(call_id=c.id, name=c.name, content='{"ok": true, "message": "Researching."}')
             for c in response.tool_calls

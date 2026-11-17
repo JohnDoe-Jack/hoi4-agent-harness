@@ -144,7 +144,7 @@ def test_gemini_falls_back_to_the_call_id_when_a_result_has_no_name():
 
 def test_gemini_declarations_match_the_catalog():
     assert google.wire_declarations([SPEC]) == [
-        {"name": SPEC.name, "description": SPEC.description, "parameters": SPEC.parameters}
+        {"name": SPEC.name, "description": SPEC.description, "parameters_json_schema": SPEC.parameters}
     ]
     assert google.wire_declarations(None) == []
 
